@@ -1,0 +1,158 @@
+body {
+    font-family: "Microsoft YaHei", sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom, #fff, #f7f7f7);
+}
+.navbar {
+    background-color: #e60012;
+    padding: 0; /* 移除顶部和底部的 padding */
+    color: white;
+    display: flex;
+    list-style: none;
+    justify-content: center; /* 居中对齐 */
+    align-items: center; /* 垂直居中 */
+    height: 60px; /* 设置一个统一的高度 */
+}
+
+/* 设置每个导航项的高度 */
+.navbar li a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* 使每个导航项的高度占满整个 navbar */
+    padding: 0 20px; /* 设置左右间距 */
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    line-height: 60px; /* 确保文字垂直居中 */
+}
+
+/* 当前页面加深背景色 */
+.navbar li a.active {
+    background-color: #990000; /* 更深的红色 */
+}
+
+
+.navbar h1 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.navbar li a:hover {
+    background-color: black;
+    background-image: url("../images/arrow_up.png");
+    background-repeat: no-repeat;
+    background-position: center bottom;
+}
+
+.page-header {
+    text-align: center;
+    padding: 30px 20px;
+    background-color: #ffeef0;
+    color: #333;
+}
+
+.page-header h1 {
+    margin-bottom: 10px;
+    color: #e6162d;
+}
+
+.upload-section {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 24px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
+
+.upload-section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #e6162d;
+}
+
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.upload-form input,
+.upload-form textarea {
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.upload-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.upload-form button {
+    background-color: #e6162d;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.upload-form button:hover {
+    background-color: #c31326;
+}
+
+.activities-display {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.activities-display h2 {
+    text-align: center;
+    color: #e6162d;
+    margin-bottom: 24px;
+}
+
+.activity-card {
+    background: white;
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    margin-bottom: 24px;
+    align-items: center;
+}
+
+.activity-card img {
+    width: 180px;
+    height: 120px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.activity-info h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #e6162d;
+}
+
+.activity-info p {
+    margin: 4px 0;
+    color: #444;
+    font-size: 14px;
+}

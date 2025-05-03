@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>校园综合服务平台</title>
+	<link rel="stylesheet" href="login-css.css">
+</head>
+<body>
+
+<!-- 顶部导航栏 -->
+<!-- 顶部导航栏 -->
+<header>
+	<div class="navbar">
+		<div class="hidden-space">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+		<ul>
+			<li><a href="login.html" class="active">首页</a></li>
+			<li><a href="activities.html">社团活动专区</a></li>
+			<li><a href="materials.html">课件共享区</a></li>
+			<li><a href="forum.html">论坛</a></li>
+			<li><a href="confess.html">表白墙</a></li>
+		</ul>
+		<div class="user-area">
+			<a href="#" onclick="confirmLogout()" class="logout">退出登录</a>
+
+			<!-- 当前头像 -->
+			<img id="current-avatar" src="../images/1.jpg" class="avatar-circle" alt="头像">
+
+			<!-- 头像选择弹窗 -->
+			<div id="avatar-selector" class="avatar-selector hidden">
+				<div class="avatar-grid">
+					<!-- 默认头像列表 -->
+					<img src="../images/1.jpg" class="avatar-option">
+					<img src="../images/2.jpg" class="avatar-option">
+					<img src="../images/3.jpg" class="avatar-option">
+					<img src="../images/4.jpg" class="avatar-option">
+					<img src="../images/5.jpg" class="avatar-option">
+					<img src="../images/6.jpg" class="avatar-option">
+					<img src="../images/7.jpg" class="avatar-option">
+					<img src="../images/8.jpg" class="avatar-option">
+					<img src="../images/9.jpg" class="avatar-option">
+					<img src="../images/10.jpg" class="avatar-option">
+					<img src="../images/11.jpg" class="avatar-option">
+					<img src="../images/12.jpg" class="avatar-option">
+
+					<!-- 自定义头像上传 -->
+					<label class="custom-upload">
+						+自定义头像
+						<input type="file" id="custom-avatar" accept="image/*">
+					</label>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</header>
+
+
+<!-- 简介区域 -->
+<section class="intro">
+	<h1>欢迎来到校园综合服务平台</h1>
+	<p>在这里，你可以便捷地进行校园生活相关服务，如失物招领、二手市场、校园资讯等。</p>
+</section>
+
+<!-- 三大功能区域 -->
+<section class="features">
+	<div class="feature-item">
+		<h3><a href="lost-and-found.html">失物招领</a></h3>
+		<p>帮助同学们找回遗失的物品，提供失物信息的发布和查找服务。</p>
+	</div>
+	<div class="feature-item">
+		<h3><a href="second-hand-market.html">二手市场</a></h3>
+		<p>提供校园内的二手商品交易平台，便于资源的合理流通。</p>
+	</div>
+	<div class="feature-item">
+		<h3><a href="campusnews.html">校园火榜</a></h3>
+		<p>为同学们提供最新的校园活动、通知和新闻。</p>
+	</div>
+
+</section>
+
+<!-- 页脚 -->
+<footer>
+	<p>&copy; 2025 校园综合服务平台 | All rights reserved</p>
+</footer>
+<script src="../scripts/jquery-3.7.1.js"></script>
+<script>
+	document.querySelector('.logout').addEventListener('click', function () {
+		const confirmed = confirm("确定退出登录吗？");
+		if (confirmed) {
+			window.location.href = "index.html"; // 跳转到首页
+		}});
+
+	// 切换头像选择器显示
+	const currentAvatar = document.getElementById("current-avatar");
+	const avatarSelector = document.getElementById("avatar-selector");
+
+	currentAvatar.addEventListener("click", () => {
+		avatarSelector.classList.toggle("hidden");
+	});
+
+	// 点击默认头像选择
+	document.querySelectorAll(".avatar-option").forEach(option => {
+		option.addEventListener("click", () => {
+			currentAvatar.src = option.src;
+			avatarSelector.classList.add("hidden");
+		});
+	});
+
+	// 上传自定义头像
+	document.getElementById("custom-avatar").addEventListener("change", function () {
+		const file = this.files[0];
+		if (file) {
+			const reader = new FileReader();
+			reader.onload = function (e) {
+				currentAvatar.src = e.target.result;
+				avatarSelector.classList.add("hidden");
+			}
+			reader.readAsDataURL(file);
+		}
+	});
+
+</script>
+
+
+
+</body>
+</html>

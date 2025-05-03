@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>校园服务平台 - 登录</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .login-container {
+      background: #fff;
+      padding-top: 40px;
+      padding-right: 40px;
+      padding-left: 40px;
+      padding-bottom: 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 320px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 15px;
+      background-color: #e6162d;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #c51428;
+    }
+    .link {
+      margin-top: 15px;
+    }
+    .link a {
+      color: #e6162d;
+      text-decoration: none;
+    }
+    .forgot {
+      margin-top: 10px;
+      font-size: 14px;
+      text-align: right;
+    }
+    .forgot a {
+      color: #666;
+      text-decoration: none;
+    }
+    .forgot a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <h2>校园服务平台登录</h2>
+    <input type="text" id="username" placeholder="请输入用户名" />
+    <input type="password" id="password" placeholder="请输入密码" />
+    <button onclick="login()">登录</button>
+
+    <div class="link">
+      还没有账号？<a href="register.html">去注册</a>
+    </div>
+
+    <div class="forgot">
+      <a href="forgot-password.html">忘记密码？</a>
+    </div>
+  </div>
+
+</body>
+</html>
