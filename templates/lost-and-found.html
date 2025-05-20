@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>失物招领</title>
+  <link rel="stylesheet" href="{% static 'css/common.css' %}">
+  <link rel="stylesheet" href="{% static 'css/animations.css' %}">
+  <link rel="stylesheet" href="{% static 'css/lost-and-found-css.css' %}">
+  <link rel="stylesheet" href="{% static 'css/decorations.css' %}">
+  <style>
+    /* 确保英雄区域标题字体与首页一致且为白色 */
+    .hero h1 {
+      font-family: 'Roboto', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 700;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      color: white;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+    
+    /* 使用与首页一致的渐变背景 */
+    .hero {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* 修复背景和动画问题 */
+    .hero-shape {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+    }
+    
+    .shape1 {
+      background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+    }
+    
+    .shape2 {
+      background: radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%);
+    }
+    
+    .shape3 {
+      background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+    }
+
+    /* 确保页面可正常滚动 */
+    html, body {
+      height: 100%;
+      overflow-y: auto;
+    }
+    
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    .main-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .lost-and-found-section {
+      flex: 1;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body class="lostfound">
+
+<!-- 页面加载动画 -->
+<div class="page-loader">
+  <div class="loader-content">
+    <div class="loader"></div>
+    <p class="fade-in">加载中，请稍候...</p>
+  </div>
+</div>
+
+<!-- 滚动进度条 -->
+<div class="scroll-progress"></div>
+
+<!-- 装饰背景 -->
+<div class="flowing-background">
+  <div class="decorative-line"></div>
+  <div class="decorative-line"></div>
+  <div class="decorative-line"></div>
+  <div class="decorative-line"></div>
+  <div class="decorative-shape"></div>
+  <div class="decorative-shape"></div>
+  <div class="decorative-shape"></div>
+  <img src="{% static 'images/book-logo.svg' %}" class="mini-logo" alt="装饰">
+  <img src="{% static 'images/chat-logo.svg' %}" class="mini-logo" alt="装饰">
+  <img src="{% static 'images/heart-logo.svg' %}" class="mini-logo" alt="装饰">
+  <!-- 添加20个装饰点 -->
+  {% for i in "12345678901234567890" %}
+  <div class="decorative-dot"></div>
+  {% endfor %}
+  <div class="wave"></div>
+  <div class="wave"></div>
+</div>
+
+<!-- 顶部导航栏 -->
+<header>
+  <div class="navbar">
+    <div class="nav-links">
+      <ul>
+        <li><a href="{% url 'homepage:homepage' %}">首页</a></li>
+        <li><a href="{% url 'activities:activities' %}">社团活动</a></li>
+        <li><a href="{% url 'materials:materials'%}">课件共享</a></li>
+        <li><a href="{% url 'forum:forum' %}">论坛</a></li>
+        <li><a href="{% url 'confess:confess' %}">表白墙</a></li>
+        <li><a href="{% url 'lostfound:lost_found_page' %}" class="active">失物招领</a></li>
+        <!-- 二手市场功能暂时隐藏 -->
+        <li><a href="{% url 'news:news' %}">校园火榜</a></li>
+      </ul>
+    </div>
+    <div class="user-area">
+      <a href="{% url 'users:logout' %}" class="logout">退出登录</a>
+      <!-- 当前头像 -->
+      {% if user.avatar %}
+      <img id="current-avatar" src="{{ user.avatar.url }}" class="avatar-circle hover-scale" alt="头像" onerror="this.src='/media/default_avatars/1.jpg'">
+      {% elif user.default_avatar %}
+      <img id="current-avatar" src="/media/{{ user.default_avatar }}" class="avatar-circle hover-scale" alt="默认头像" onerror="this.src='/media/default_avatars/1.jpg'">
+      {% else %}
+      <img id="current-avatar" src="/media/default_avatars/1.jpg" class="avatar-circle hover-scale" alt="默认头像">
+      {% endif %}
+      
+      <!-- 头像选择弹窗 -->
+      <div id="avatar-selector" class="avatar-selector hidden">
+        <div class="avatar-grid">
+          <!-- 默认头像列表 -->
+          {% for i in avatar_range %}
+          <img src="/media/default_avatars/{{ i }}.jpg" class="avatar-option hover-scale" data-path="default_avatars/{{ i }}.jpg">
+          {% endfor %}
+
+          <!-- 自定义头像上传 -->
+          <form method="post" enctype="multipart/form-data" action="{% url 'homepage:upload_avatar' %}">
+            {% csrf_token %}
+            <label class="custom-upload hover-lift">
+              +自定义头像
+              <input type="file" name="avatar" accept="image/*" onchange="this.form.submit()">
+            </label>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="main-container page-background">
+  <!-- 英雄区域 -->
+  <section class="hero reduced-height gradient-animation">
+    <div class="hero-content">
+      <h1 class="fade-in-down">失物招领</h1>
+      <p class="typing-text fade-in-up delay-300" data-speed="80" data-delay="500">寻找失物，归还招领，温暖校园每一天</p>
+      <div class="hero-cta fade-in delay-600">
+        <button id="post-item-btn" class="btn btn-special hover-lift">发布信息</button>
+        <button id="open-chat-selector" class="btn btn-outline hover-lift">我的聊天</button>
+      </div>
+    </div>
+    <div class="hero-shapes">
+      <div class="hero-shape shape1 float"></div>
+      <div class="hero-shape shape2 float-strong delay-200"></div>
+      <div class="hero-shape shape3 float delay-400"></div>
+    </div>
+  </section>
+
+  <!-- 搜索框 -->
+  <div class="search-container">
+    <form method="get" action="{% url 'lostfound:lost_found_page' %}" class="search-form">
+      <input type="text" name="q" placeholder="关键词搜索..." value="{{ request.GET.q }}">
+      <button type="submit" class="search-btn">搜索</button>
+    </form>
+  </div>
+
+  <!-- 显示失物招领列表 -->
+  <div class="lost-and-found-section">
+    <div class="list-toggle">
+      <button id="show-lost" class="toggle-btn active">失物</button>
+      <button id="show-found" class="toggle-btn">招领</button>
+    </div>
+
+    <div id="lost-list" class="lost-and-found-list">
+      <h2>失物信息</h2>
+      <div class="items-grid">
+        {% for item in lost_items %}
+        <div class="lost-item">
+          {% if item.image %}
+          <img src="{{ item.image.url }}" alt="Lost Item" class="lost-item-img">
+          {% else %}
+          <img src="/media/users/no_upload.jpg" alt="默认图片" class="lost-item-img">
+          {% endif %}
+          <div class="item-info">
+            <h3>{{ item.name }}</h3>
+            <p><strong>地点：</strong>{{ item.location }}</p>
+            <p><strong>联系方式：</strong>{{ item.contact }}</p>
+            <p><strong>描述：</strong>{{ item.description|truncatechars:50 }}</p>
+            <p><strong>发布时间：</strong>{{ item.time|date:"Y-m-d H:i" }}</p>
+            <button class="contact-btn"
+                    data-user="{{ item.creator.id }}"
+                    data-username="{{ item.creator.username }}"
+                    data-is-owner="{% if request.user.id == item.creator.id %}true{% else %}false{% endif %}">
+              联系发布者
+            </button>
+          </div>
+        </div>
+        {% empty %}
+        <p class="empty-message">暂无失物信息</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div id="found-list" class="lost-and-found-list" style="display:none;">
+      <h2>招领信息</h2>
+      <div class="items-grid">
+        {% for item in found_items %}
+        <div class="lost-item">
+          {% if item.image %}
+          <img src="{{ item.image.url }}" alt="Found Item" class="lost-item-img">
+          {% else %}
+          <img src="/media/users/no_upload.jpg" alt="默认图片" class="lost-item-img">
+          {% endif %}
+          <div class="item-info">
+            <h3>{{ item.name }}</h3>
+            <p><strong>地点：</strong>{{ item.location }}</p>
+            <p><strong>联系方式：</strong>{{ item.contact }}</p>
+            <p><strong>描述：</strong>{{ item.description|truncatechars:50 }}</p>
+            <p><strong>发布时间：</strong>{{ item.time|date:"Y-m-d H:i" }}</p>
+            <button class="contact-btn"
+                    data-user="{{ item.creator.id }}"
+                    data-username="{{ item.creator.username }}"
+                    data-is-owner="{% if request.user.id == item.creator.id %}true{% else %}false{% endif %}">
+              联系发布者
+            </button>
+          </div>
+        </div>
+        {% empty %}
+        <p class="empty-message">暂无招领信息</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 发布失物/招领弹窗 -->
+<div class="modal" id="post-modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <h2>发布失物/招领信息</h2>
+    <form action="{% url 'lostfound:create_item' %}" method="POST" enctype="multipart/form-data" id="lost-found-form">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="item-type">信息类型</label>
+        <select name="item_type" id="item-type" class="type-selector">
+          <option value="lost">失物</option>
+          <option value="found">招领</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="item-name">物品名称</label>
+        <input type="text" name="name" id="item-name" placeholder="物品名称" required>
+      </div>
+      <div class="form-group">
+        <label for="item-location">地点</label>
+        <input type="text" name="location" id="item-location" placeholder="失物地点" required>
+      </div>
+      <div class="form-group">
+        <label for="item-contact">联系方式</label>
+        <input type="text" name="contact" id="item-contact" placeholder="联系方式" required>
+      </div>
+      <div class="form-group">
+        <label for="item-description">物品描述</label>
+        <textarea name="description" id="item-description" placeholder="物品描述 (选填)"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="item-image">物品图片</label>
+        <input type="file" name="image" id="item-image" accept="image/*">
+      </div>
+      <button type="submit" class="btn btn-special">发布</button>
+    </form>
+  </div>
+</div>
+
+<!-- 聊天用户列表弹窗 -->
+<div class="modal" id="chat-user-modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <h2>我的聊天</h2>
+    <div id="chat-user-list">
+      <ul id="chat-users"></ul>
+    </div>
+  </div>
+</div>
+
+<!-- 聊天框 -->
+<div class="chat-modal" id="chat-modal">
+  <div class="chat-box">
+    <div class="chat-header">
+      <span id="chat-with-user">与某人聊天</span>
+      <button class="chat-close-btn" id="close-chat">×</button>
+    </div>
+    <div id="chat-messages" class="chat-messages">
+      <!-- 消息通过 JS 动态添加 -->
+    </div>
+    <div class="chat-input">
+      <textarea id="chat-input" placeholder="输入消息..."></textarea>
+      <button id="send-btn">发送</button>
+    </div>
+  </div>
+</div>
+
+<!-- 回到顶部按钮 -->
+<button class="scroll-to-top hover-scale">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 19V5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M5 12L12 5L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>
+
+<!-- 脚本 -->
+<script src="{% static 'js/jquery-3.7.1.js' %}"></script>
+<script>
+  // 退出登录确认
+  const logoutBtn = document.querySelector('.logout');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const confirmed = confirm("确定退出登录吗？");
+      if (confirmed) {
+        window.location.href = this.href;
+      }
+    });
+  }
+</script>
+<script src="{% static 'js/avatar-handler.js' %}"></script>
+<script src="{% static 'js/lost-and-found-js.js' %}"></script>
+
+</body>
+</html>

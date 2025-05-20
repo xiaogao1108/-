@@ -1,0 +1,344 @@
+body {
+  font-family: "Microsoft YaHei", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #4b6cb7, #6a3093, #7b4397);
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.success-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.flowing-lines {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.line {
+  position: absolute;
+  background: none;
+  transition: transform 0.3s ease;
+}
+
+.line1, .line2, .line3, .line4 {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0.3;
+}
+
+.line1 {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' d='M0,100 C300,0 600,200 1200,50' /%3E%3C/svg%3E") repeat-x;
+  background-size: 1200px 200px;
+  animation: wave1 20s linear infinite;
+}
+
+.line2 {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' d='M0,50 C400,150 800,0 1200,100' /%3E%3C/svg%3E") repeat-x;
+  background-size: 1200px 200px;
+  animation: wave2 25s linear infinite;
+}
+
+.line3 {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' d='M0,150 C200,50 600,150 1200,25' /%3E%3C/svg%3E") repeat-x;
+  background-size: 1200px 200px;
+  animation: wave3 30s linear infinite;
+}
+
+.line4 {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' d='M0,25 C300,200 700,50 1200,150' /%3E%3C/svg%3E") repeat-x;
+  background-size: 1200px 200px;
+  animation: wave4 35s linear infinite;
+}
+
+@keyframes wave1 {
+  0% { background-position-x: 0; }
+  100% { background-position-x: 1200px; }
+}
+
+@keyframes wave2 {
+  0% { background-position-x: 0; }
+  100% { background-position-x: -1200px; }
+}
+
+@keyframes wave3 {
+  0% { background-position-x: -1200px; }
+  100% { background-position-x: 0; }
+}
+
+@keyframes wave4 {
+  0% { background-position-x: -1200px; }
+  100% { background-position-x: 1200px; }
+}
+
+/* 侧边装饰线条 */
+.side-decoration {
+  position: absolute;
+  height: 100%;
+  width: 100px;
+  opacity: 0.3;
+  transition: transform 0.3s ease;
+}
+
+.left-decoration {
+  left: 0;
+  top: 0;
+}
+
+.right-decoration {
+  right: 0;
+  top: 0;
+}
+
+.deco-path {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 1;
+}
+
+/* 底部波浪 */
+.bottom-waves {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  transition: transform 0.3s ease;
+}
+
+/* 装饰Logo */
+.campus-logo {
+  position: absolute;
+  opacity: 0.8;
+  transition: transform 0.3s ease;
+}
+
+.logo1 {
+  top: 15%;
+  right: 10%;
+  animation: float-logo 20s ease-in-out infinite;
+}
+
+.logo2 {
+  bottom: 20%;
+  left: 15%;
+  animation: float-logo 25s ease-in-out infinite;
+  animation-delay: 5s;
+}
+
+.logo3 {
+  top: 60%;
+  right: 20%;
+  animation: float-logo 30s ease-in-out infinite;
+  animation-delay: 10s;
+}
+
+@keyframes float-logo {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(-10px, 15px) rotate(5deg); }
+  50% { transform: translate(15px, 5px) rotate(-5deg); }
+  75% { transform: translate(5px, -10px) rotate(3deg); }
+}
+
+/* 点阵背景 */
+.dot-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.dot {
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  animation: pulse-dot 3s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 0.2; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+}
+
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+  transition: transform 0.3s ease;
+}
+
+.bubble1 {
+  width: 250px;
+  height: 250px;
+  top: 20%;
+  left: 20%;
+  animation: float1 20s ease-in-out infinite;
+}
+
+.bubble2 {
+  width: 350px;
+  height: 350px;
+  top: 60%;
+  right: 10%;
+  animation: float2 25s ease-in-out infinite;
+}
+
+.bubble3 {
+  width: 200px;
+  height: 200px;
+  bottom: 20%;
+  left: 30%;
+  animation: float3 15s ease-in-out infinite;
+}
+
+@keyframes float1 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(50px, -30px); }
+}
+
+@keyframes float2 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-40px, 40px); }
+}
+
+@keyframes float3 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, 30px); }
+}
+
+.register-container {
+  width: 450px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  padding: 40px;
+  text-align: center;
+  position: relative;
+  backdrop-filter: blur(10px);
+  transform: translateY(0);
+  animation: popup 0.6s ease-out;
+  z-index: 10;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@keyframes popup {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #6a3093, #7b4397);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  margin: 0 auto 20px;
+  box-shadow: 0 5px 15px rgba(122, 67, 151, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.register-container h2 {
+  color: #4b6cb7;
+  margin-bottom: 15px;
+  font-size: 28px;
+}
+
+.register-container p {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.countdown {
+  font-size: 16px;
+  color: #777;
+  margin-top: -5px;
+  margin-bottom: 30px;
+}
+
+#timer {
+  font-weight: bold;
+  color: #7b4397;
+}
+
+.register-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #4b6cb7, #6a3093);
+  color: white;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 30px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.register-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.register-btn:hover::before {
+  left: 100%;
+}
+
+.register-btn:hover {
+  background: linear-gradient(135deg, #5d7ec9, #7b4397);
+  transform: translateY(-3px);
+  box-shadow: 0 7px 15px rgba(0, 0, 0, 0.3);
+}
+
+.register-btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+  .register-container {
+    width: 85%;
+    padding: 30px;
+  }
+}

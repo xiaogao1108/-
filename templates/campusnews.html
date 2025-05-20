@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>校园火榜 - 校园综合服务平台</title>
+  <link rel="stylesheet" href="{% static 'css/common.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/animations.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/campusnews-css.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/decorations.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="campusnews">
+
+<!-- 页面加载动画 -->
+<div class="page-loader">
+  <div class="loader-content">
+    <div class="loader"></div>
+    <p class="fade-in">加载中，请稍候...</p>
+  </div>
+</div>
+
+<!-- 滚动进度条 -->
+<div class="scroll-progress"></div>
+
+<!-- 装饰背景 -->
+<div class="flowing-background">
+  <div class="decorative-line"></div>
+  <div class="decorative-line"></div>
+  <div class="decorative-line"></div>
+  <div class="decorative-line"></div>
+  <div class="decorative-shape"></div>
+  <div class="decorative-shape"></div>
+  <div class="decorative-shape"></div>
+  <img src="{% static 'images/book-logo.svg' %}" class="mini-logo" alt="装饰">
+  <img src="{% static 'images/chat-logo.svg' %}" class="mini-logo" alt="装饰">
+  <img src="{% static 'images/heart-logo.svg' %}" class="mini-logo" alt="装饰">
+  <!-- 添加20个装饰点 -->
+  {% for i in "12345678901234567890" %}
+  <div class="decorative-dot"></div>
+  {% endfor %}
+  <div class="wave"></div>
+  <div class="wave"></div>
+</div>
+
+<!-- 新增流动效果元素 -->
+<div class="particle-system">
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+</div>
+
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+
+<div class="ripple-ring"></div>
+<div class="ripple-ring"></div>
+<div class="ripple-ring"></div>
+<div class="ripple-ring"></div>
+
+<!-- 顶部导航栏 -->
+<header>
+  <div class="navbar">
+    <div class="nav-links">
+      <ul>
+        <li><a href="{% url 'homepage:homepage' %}">首页</a></li>
+        <li><a href="{% url 'activities:activities' %}">社团活动</a></li>
+        <li><a href="{% url 'materials:materials'%}">课件共享</a></li>
+        <li><a href="{% url 'forum:forum' %}">论坛</a></li>
+        <li><a href="{% url 'confess:confess' %}">表白墙</a></li>
+        <li><a href="{% url 'lostfound:lost_found_page' %}">失物招领</a></li>
+        <!-- 二手市场功能暂时隐藏 -->
+        <li><a href="{% url 'news:news' %}" class="active">校园火榜</a></li>
+      </ul>
+    </div>
+    <div class="user-area">
+      <a href="{% url 'users:logout' %}" class="logout">退出登录</a>
+      <!-- 当前头像 -->
+      {% if user.avatar %}
+      <img id="current-avatar" src="{{ user.avatar.url }}" class="avatar-circle hover-scale" alt="头像" onerror="this.src='/media/default_avatars/1.jpg'">
+      {% elif user.default_avatar %}
+      <img id="current-avatar" src="/media/{{ user.default_avatar }}" class="avatar-circle hover-scale" alt="默认头像" onerror="this.src='/media/default_avatars/1.jpg'">
+      {% else %}
+      <img id="current-avatar" src="/media/default_avatars/1.jpg" class="avatar-circle hover-scale" alt="默认头像">
+      {% endif %}
+
+      <!-- 头像选择弹窗 -->
+      <div id="avatar-selector" class="avatar-selector hidden">
+        <h3 class="avatar-selector-title">选择头像</h3>
+        <div class="avatar-grid">
+          <!-- 默认头像列表 -->
+          {% for i in avatar_range %}
+          <img src="/media/default_avatars/{{ i }}.jpg" class="avatar-option hover-scale" data-path="default_avatars/{{ i }}.jpg">
+          {% endfor %}
+        </div>
+        <!-- 自定义头像上传 -->
+        <form method="post" enctype="multipart/form-data" action="{% url 'homepage:upload_avatar' %}">
+          {% csrf_token %}
+          <label class="custom-upload hover-lift">
+            <i class="fas fa-upload"></i> 上传自定义头像
+            <input type="file" name="avatar" accept="image/*">
+          </label>
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- 英雄区域 -->
+<section class="hero gradient-animation">
+  <div class="hero-content">
+    <h1 class="fade-in-down">🔥 校园火榜</h1>
+    <p class="typing-text fade-in-up delay-300" data-speed="80" data-delay="500">热门内容一览，不错过精彩瞬间</p>
+  </div>
+  <div class="hero-shapes">
+    <div class="hero-shape shape1 float"></div>
+    <div class="hero-shape shape2 float-strong delay-200"></div>
+    <div class="hero-shape shape3 float delay-400"></div>
+  </div>
+  <!-- 添加流动线条 -->
+  <div class="flowing-lines">
+    <div class="flowing-line"></div>
+    <div class="flowing-line"></div>
+    <div class="flowing-line"></div>
+    <div class="flowing-line"></div>
+    <div class="flowing-shape"></div>
+    <div class="flowing-shape"></div>
+    <div class="flowing-shape"></div>
+  </div>
+</section>
+
+<!-- 热门内容区域 -->
+<main class="main-content">
+  <div class="tabs-container">
+    <div class="tabs">
+      <button class="tab active" data-tab="forum">论坛热榜</button>
+      <button class="tab" data-tab="materials">课件热榜</button>
+      <button class="tab" data-tab="activities">活动热榜</button>
+    </div>
+  </div>
+
+  <!-- 论坛热榜 -->
+  <section id="forum" class="hotlist-section active">
+    <h2 class="section-title">论坛热榜 <span class="section-subtitle">热门讨论话题</span></h2>
+    <div class="section-line"></div>
+    
+    <!-- 前三名展示 -->
+    {% if hot_forum_posts|length > 0 %}
+    <div class="top-three">
+      {% with top_posts=hot_forum_posts|slice:":3" %}
+        {% for post in top_posts %}
+          <div class="top-rank-{{ forloop.counter }}">
+            <div class="top-card forum-post-card" data-post-id="{{ post.id }}">
+              <div class="top-badge rank-{{ forloop.counter }}-badge">{{ forloop.counter }}</div>
+              {% if post.image %}
+              <div class="top-image">
+                <img src="/media/{{ post.image }}" alt="帖子图片">
+              </div>
+              {% endif %}
+              <div class="top-content">
+                <h3 class="top-title">{{ post.title }}</h3>
+                <p class="top-text">{{ post.content|truncatechars:100 }}</p>
+                <div class="top-meta">
+                  <span class="likes">❤️ {{ post.likes_count }}</span>
+                  <span class="comments">💬 {{ post.comments.count }}</span>
+                </div>
+                <div class="top-author">
+                  <div class="top-author-info">
+                    {% if post.author.avatar %}
+                    <img class="author-avatar" src="{{ post.author.avatar.url }}" alt="用户头像">
+                    {% elif post.author.default_avatar %}
+                    <img class="author-avatar" src="/media/{{ post.author.default_avatar }}" alt="用户头像">
+                    {% else %}
+                    <img class="author-avatar" src="/media/default_avatars/1.jpg" alt="用户头像">
+                    {% endif %}
+                    <span>{{ post.author.username }}</span>
+                  </div>
+                  <div class="top-author-date">{{ post.created_at|date:"Y-m-d H:i" }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endwith %}
+    </div>
+    
+    <!-- 其他帖子 -->
+    <div class="hot-grid">
+      <!-- 装饰元素 -->
+      <div class="hot-grid-decoration">
+        <div class="decoration-shape"></div>
+        <div class="decoration-shape"></div>
+        <div class="decoration-shape"></div>
+        <div class="decoration-line"></div>
+        <div class="decoration-line"></div>
+        <div class="decoration-line"></div>
+      </div>
+      
+      {% for post in hot_forum_posts|slice:"3:" %}
+        <div class="hot-card hover-lift forum-post-card {% cycle 'fly-in-left' 'fly-in-right' %}" data-post-id="{{ post.id }}">
+          <div class="hot-rank">{{ forloop.counter|add:3 }}</div>
+          {% if post.image %}
+          <div class="hot-image">
+            <img src="/media/{{ post.image }}" alt="帖子图片">
+          </div>
+          {% endif %}
+          <div class="hot-content">
+            <h3 class="hot-title">{{ post.title }}</h3>
+            <p class="hot-text">{{ post.content|truncatechars:80 }}</p>
+            <p class="hot-meta">
+              <span class="likes">❤️ {{ post.likes_count }}</span>
+              <span class="comments">💬 {{ post.comments.count }}</span>
+            </p>
+            <div class="hot-author">
+              <div class="author-info">
+                {% if post.author.avatar %}
+                <img class="author-avatar" src="{{ post.author.avatar.url }}" alt="用户头像">
+                {% elif post.author.default_avatar %}
+                <img class="author-avatar" src="/media/{{ post.author.default_avatar }}" alt="用户头像">
+                {% else %}
+                <img class="author-avatar" src="/media/default_avatars/1.jpg" alt="用户头像">
+                {% endif %}
+                <span>{{ post.author.username }}</span>
+              </div>
+              <div class="post-date">{{ post.created_at|date:"Y-m-d H:i" }}</div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    {% else %}
+      <div class="no-content">暂无热门论坛帖子</div>
+    {% endif %}
+  </section>
+
+  <!-- 课件热榜 -->
+  <section id="materials" class="hotlist-section hidden">
+    <h2 class="section-title">课件热榜 <span class="section-subtitle">热门下载资源</span></h2>
+    <div class="section-line"></div>
+    
+    <!-- 前三名展示 -->
+    {% if hot_materials|length > 0 %}
+    <div class="top-three">
+      {% with top_materials=hot_materials|slice:":3" %}
+        {% for material in top_materials %}
+          <div class="top-rank-{{ forloop.counter }}">
+            <div class="top-card">
+              <div class="top-badge rank-{{ forloop.counter }}-badge">{{ forloop.counter }}</div>
+              {% if material.price > 0 %}
+              <div class="price-tag paid">¥{{ material.price }}</div>
+              {% else %}
+              <div class="price-tag free">免费</div>
+              {% endif %}
+              <div class="top-content">
+                <h3 class="top-title">{{ material.title }}</h3>
+                <p class="top-text">{{ material.description|truncatechars:100 }}</p>
+                <div class="top-meta">
+                  <span class="downloads">📥 {{ material.download_count }}</span>
+                  <span class="file-type">
+                    <div class="file-icon file-{{ material.get_file_extension|default:'other' }}">
+                      {{ material.get_file_extension|default:'文件' }}
+                    </div>
+                  </span>
+                </div>
+                <div class="top-author">
+                  <div class="top-author-info">
+                    {% if material.uploaded_by.avatar %}
+                    <img class="author-avatar" src="{{ material.uploaded_by.avatar.url }}" alt="用户头像">
+                    {% elif material.uploaded_by.default_avatar %}
+                    <img class="author-avatar" src="/media/{{ material.uploaded_by.default_avatar }}" alt="用户头像">
+                    {% else %}
+                    <img class="author-avatar" src="/media/default_avatars/1.jpg" alt="用户头像">
+                    {% endif %}
+                    <span>{{ material.uploaded_by.username }}</span>
+                  </div>
+                  <div class="top-author-date">{{ material.upload_time|date:"Y-m-d H:i" }}</div>
+                </div>
+                <div class="action-buttons">
+                  <a href="/materials/download/{{ material.id }}/" class="btn btn-primary btn-sm download-btn">
+                    下载课件
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endwith %}
+    </div>
+    
+    <!-- 其他课件 -->
+    <div class="hot-grid">
+      <!-- 装饰元素 -->
+      <div class="hot-grid-decoration">
+        <div class="decoration-shape"></div>
+        <div class="decoration-shape"></div>
+        <div class="decoration-shape"></div>
+        <div class="decoration-line"></div>
+        <div class="decoration-line"></div>
+        <div class="decoration-line"></div>
+      </div>
+      
+      {% for material in hot_materials|slice:"3:" %}
+        <div class="hot-card hover-lift {% cycle 'fly-in-left' 'fly-in-right' %}">
+          <div class="hot-rank">{{ forloop.counter|add:3 }}</div>
+          {% if material.price > 0 %}
+          <div class="price-tag paid">¥{{ material.price }}</div>
+          {% else %}
+          <div class="price-tag free">免费</div>
+          {% endif %}
+          <div class="hot-content">
+            <h3 class="hot-title">{{ material.title }}</h3>
+            <p class="hot-text">{{ material.description|truncatechars:80 }}</p>
+            <p class="hot-meta">
+              <span class="downloads">📥 {{ material.download_count }}</span>
+              <span class="file-type">
+                <div class="file-icon file-{{ material.get_file_extension|default:'other' }}">
+                  {{ material.get_file_extension|default:'文件' }}
+                </div>
+              </span>
+            </p>
+            <div class="hot-author">
+              <div class="author-info">
+                {% if material.uploaded_by.avatar %}
+                <img class="author-avatar" src="{{ material.uploaded_by.avatar.url }}" alt="用户头像">
+                {% elif material.uploaded_by.default_avatar %}
+                <img class="author-avatar" src="/media/{{ material.uploaded_by.default_avatar }}" alt="用户头像">
+                {% else %}
+                <img class="author-avatar" src="/media/default_avatars/1.jpg" alt="用户头像">
+                {% endif %}
+                <span>{{ material.uploaded_by.username }}</span>
+              </div>
+              <div class="post-date">{{ material.upload_time|date:"Y-m-d H:i" }}</div>
+            </div>
+            <div class="action-buttons">
+              <a href="/materials/download/{{ material.id }}/" class="btn btn-primary btn-sm download-btn">
+                下载课件
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    {% else %}
+      <div class="no-content">暂无热门课件</div>
+    {% endif %}
+  </section>
+
+  <!-- 活动热榜 -->
+  <section id="activities" class="hotlist-section hidden">
+    <h2 class="section-title">活动热榜 <span class="section-subtitle">热门校园活动</span></h2>
+    <div class="section-line"></div>
+    
+    <!-- 前三名展示 -->
+    {% if hot_activities|length > 0 %}
+    <div class="top-three">
+      {% with top_activities=hot_activities|slice:":3" %}
+        {% for activity in top_activities %}
+          <div class="top-rank-{{ forloop.counter }}">
+            <div class="top-card">
+              <div class="top-badge rank-{{ forloop.counter }}-badge">{{ forloop.counter }}</div>
+              {% if activity.image %}
+              <div class="top-image">
+                <img src="{{ activity.image.url }}" alt="活动图片">
+              </div>
+              {% endif %}
+              <div class="top-content">
+                <h3 class="top-title">{{ activity.title }}</h3>
+                <p class="top-text">{{ activity.description|truncatechars:100 }}</p>
+                <div class="top-meta">
+                  <span class="date">📅 {{ activity.datetime|date:"m月d日 H:i" }}</span>
+                  <span class="location">📍 {{ activity.location }}</span>
+                </div>
+                <div class="top-author">
+                  <div class="top-author-info">
+                    {% if activity.created_by.avatar %}
+                    <img class="author-avatar" src="{{ activity.created_by.avatar.url }}" alt="用户头像">
+                    {% elif activity.created_by.default_avatar %}
+                    <img class="author-avatar" src="/media/{{ activity.created_by.default_avatar }}" alt="用户头像">
+                    {% else %}
+                    <img class="author-avatar" src="/media/default_avatars/1.jpg" alt="用户头像">
+                    {% endif %}
+                    <span>{{ activity.created_by.username }}</span>
+                  </div>
+                  <div class="top-author-date">{{ activity.created_at|date:"Y-m-d H:i" }}</div>
+                </div>
+                <div class="action-buttons">
+                  <span class="participants" data-activity-id="{{ activity.id }}">已报名：{{ activity.participants_count }} 人</span>
+                  <button class="btn btn-primary btn-sm join-activity-btn" data-activity-id="{{ activity.id }}" data-joined="{% if activity.has_joined %}true{% else %}false{% endif %}">
+                    {% if activity.has_joined %}已选{% else %}我想参加{% endif %}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endwith %}
+    </div>
+    
+    <!-- 其他活动 -->
+    <div class="hot-grid">
+      <!-- 装饰元素 -->
+      <div class="hot-grid-decoration">
+        <div class="decoration-shape"></div>
+        <div class="decoration-shape"></div>
+        <div class="decoration-shape"></div>
+        <div class="decoration-line"></div>
+        <div class="decoration-line"></div>
+        <div class="decoration-line"></div>
+      </div>
+      
+      {% for activity in hot_activities|slice:"3:" %}
+        <div class="hot-card hover-lift {% cycle 'fly-in-left' 'fly-in-right' %}">
+          <div class="hot-rank">{{ forloop.counter|add:3 }}</div>
+          {% if activity.image %}
+          <div class="hot-image">
+            <img src="{{ activity.image.url }}" alt="活动图片">
+          </div>
+          {% endif %}
+          <div class="hot-content">
+            <h3 class="hot-title">{{ activity.title }}</h3>
+            <p class="hot-text">{{ activity.description|truncatechars:80 }}</p>
+            <p class="hot-meta">
+              <span class="date">📅 {{ activity.datetime|date:"m月d日 H:i" }}</span>
+              <span class="location">📍 {{ activity.location }}</span>
+            </p>
+            <div class="hot-author">
+              <div class="author-info">
+                {% if activity.created_by.avatar %}
+                <img class="author-avatar" src="{{ activity.created_by.avatar.url }}" alt="用户头像">
+                {% elif activity.created_by.default_avatar %}
+                <img class="author-avatar" src="/media/{{ activity.created_by.default_avatar }}" alt="用户头像">
+                {% else %}
+                <img class="author-avatar" src="/media/default_avatars/1.jpg" alt="用户头像">
+                {% endif %}
+                <span>{{ activity.created_by.username }}</span>
+              </div>
+              <div class="post-date">{{ activity.created_at|date:"Y-m-d H:i" }}</div>
+            </div>
+            <div class="action-buttons">
+              <span class="participants" data-activity-id="{{ activity.id }}">已报名：{{ activity.participants_count }} 人</span>
+              <button class="btn btn-primary btn-sm join-activity-btn" data-activity-id="{{ activity.id }}" data-joined="{% if activity.has_joined %}true{% else %}false{% endif %}">
+                {% if activity.has_joined %}已选{% else %}我想参加{% endif %}
+              </button>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    {% else %}
+      <div class="no-content">暂无热门活动</div>
+    {% endif %}
+  </section>
+</main>
+
+<!-- 回到顶部按钮 -->
+<button class="scroll-to-top hover-scale">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 19V5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M5 12L12 5L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>
+
+<!-- 帖子详情弹窗 -->
+<div class="overlay" id="postModal">
+  <div class="popup">
+    <span class="close-btn">&times;</span>
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="author-info">
+          <img id="modal-author-avatar" class="author-avatar" src="" alt="用户头像">
+          <span id="modal-author-name"></span>
+        </div>
+        <div class="post-date" id="modal-post-date"></div>
+      </div>
+      <h2 id="modal-post-title" class="modal-title"></h2>
+      <div id="modal-post-content" class="modal-body"></div>
+      <div id="modal-post-image" class="modal-image"></div>
+      <div style="clear: both;"></div> <!-- 清除浮动 -->
+      <div class="modal-footer">
+        <div class="post-stats">
+          <span class="likes-count">❤️ <span id="modal-likes-count">0</span></span>
+          <span class="comments-count">💬 <span id="modal-comments-count">0</span></span>
+          <button id="like-post-btn" class="like-btn">点赞</button>
+        </div>
+      </div>
+      <div class="comments-section">
+        <h3>评论</h3>
+        <div id="modal-comments-list" class="comments-list"></div>
+        <div class="comment-form">
+          <textarea id="comment-input" placeholder="写下你的评论..."></textarea>
+          <button id="submit-comment" class="btn btn-primary">发表评论</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 图片放大弹窗 -->
+<div class="image-zoom-overlay" id="imageZoomOverlay">
+  <span class="zoom-close-btn">&times;</span>
+  <img id="zoomedImage" class="zoomed-image" src="" alt="放大图片">
+</div>
+
+<!-- 引入脚本 -->
+<script src="{% static 'js/jquery-3.7.1.js' %}"></script>
+<script src="{% static 'js/scroll-animations.js' %}"></script>
+<script src="{% static 'js/avatar-handler.js' %}"></script>
+<script src="{% static 'js/campusnews-js.js' %}"></script>
+<script>
+  // 退出登录确认
+  document.querySelector('.logout').addEventListener('click', function(e) {
+    e.preventDefault();
+    const confirmed = confirm("确定退出登录吗？");
+    if (confirmed) {
+      window.location.href = this.href;
+    }
+  });
+</script>
+
+</body>
+</html>

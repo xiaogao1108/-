@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 校园综合服务平台</title>
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+            overflow-x: hidden;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #4b6cb7, #6a3093, #7b4397);
+        }
+        
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .login-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+            animation: fadeIn 0.8s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0)
+            );
+            transform: rotate(30deg);
+            animation: shimmer 10s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes shimmer {
+            from { transform: rotate(30deg) translate(-100%, -100%); }
+            to { transform: rotate(30deg) translate(100%, 100%); }
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .logo h1 {
+            color: #4b6cb7;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .logo h1::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, #4b6cb7, #7b4397);
+            border-radius: 10px;
+        }
+        
+        .logo p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-top: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .form-group input:focus {
+            border-color: #6a3093;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(106, 48, 147, 0.1);
+            background-color: white;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4b6cb7, #6a3093);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(106, 48, 147, 0.3);
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(106, 48, 147, 0.4);
+            background: linear-gradient(135deg, #5d7ec9, #7b4397);
+        }
+        
+        .login-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .login-btn:hover::before {
+            left: 100%;
+        }
+        
+        .form-footer {
+            margin-top: 25px;
+            text-align: center;
+        }
+        
+        .form-footer a {
+            color: #4b6cb7;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .form-footer a:hover {
+            color: #7b4397;
+            text-decoration: underline;
+        }
+        
+        .messages {
+            margin-bottom: 25px;
+        }
+        
+        .messages .error {
+            background-color: rgba(230, 57, 70, 0.1);
+            border-left: 4px solid var(--error-color);
+            color: var(--error-color);
+            padding: 12px 15px;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+        
+        /* 背景流动线条 */
+        .flowing-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .line {
+            position: absolute;
+            background: none;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        
+        .line1, .line2, .line3, .line4 {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.3;
+        }
+        
+        .line1 {
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' d='M0,100 C300,0 600,200 1200,50' /%3E%3C/svg%3E") repeat-x;
+            background-size: 1200px 200px;
+            animation: wave1 20s linear infinite;
+        }
+        
+        .line2 {
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' d='M0,50 C400,150 800,0 1200,100' /%3E%3C/svg%3E") repeat-x;
+            background-size: 1200px 200px;
+            animation: wave2 25s linear infinite;
+        }
+        
+        .line3 {
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' d='M0,150 C200,50 600,150 1200,25' /%3E%3C/svg%3E") repeat-x;
+            background-size: 1200px 200px;
+            animation: wave3 30s linear infinite;
+        }
+        
+        .line4 {
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' d='M0,25 C300,200 700,50 1200,150' /%3E%3C/svg%3E") repeat-x;
+            background-size: 1200px 200px;
+            animation: wave4 35s linear infinite;
+        }
+        
+        @keyframes wave1 {
+            0% { background-position-x: 0; }
+            100% { background-position-x: 1200px; }
+        }
+        
+        @keyframes wave2 {
+            0% { background-position-x: 0; }
+            100% { background-position-x: -1200px; }
+        }
+        
+        @keyframes wave3 {
+            0% { background-position-x: -1200px; }
+            100% { background-position-x: 0; }
+        }
+        
+        @keyframes wave4 {
+            0% { background-position-x: -1200px; }
+            100% { background-position-x: 1200px; }
+        }
+        
+        /* 侧边装饰线条 */
+        .side-decoration {
+            position: absolute;
+            height: 100%;
+            width: 100px;
+            opacity: 0.3;
+            transition: transform 0.3s ease;
+        }
+        
+        .left-decoration {
+            left: 0;
+            top: 0;
+        }
+        
+        .right-decoration {
+            right: 0;
+            top: 0;
+        }
+        
+        .deco-path {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.3);
+            stroke-width: 1;
+        }
+        
+        /* 底部波浪 */
+        .bottom-waves {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            transition: transform 0.3s ease;
+        }
+        
+        /* 中间部分装饰线 */
+        .middle-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.2;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .middle-line {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+        }
+        
+        .middle-line:nth-child(1) {
+            top: 20%;
+            left: 0;
+            width: 80%;
+            transform: rotate(5deg);
+            animation: middle-move1 30s linear infinite;
+        }
+        
+        .middle-line:nth-child(2) {
+            top: 40%;
+            right: 0;
+            width: 70%;
+            transform: rotate(-3deg);
+            animation: middle-move2 25s linear infinite;
+        }
+        
+        .middle-line:nth-child(3) {
+            top: 70%;
+            left: 10%;
+            width: 60%;
+            transform: rotate(2deg);
+            animation: middle-move3 35s linear infinite;
+        }
+        
+        @keyframes middle-move1 {
+            0% { transform: translateX(-10%) rotate(5deg); }
+            50% { transform: translateX(10%) rotate(5deg); }
+            100% { transform: translateX(-10%) rotate(5deg); }
+        }
+        
+        @keyframes middle-move2 {
+            0% { transform: translateX(10%) rotate(-3deg); }
+            50% { transform: translateX(-10%) rotate(-3deg); }
+            100% { transform: translateX(10%) rotate(-3deg); }
+        }
+        
+        @keyframes middle-move3 {
+            0% { transform: translateX(-5%) rotate(2deg); }
+            50% { transform: translateX(15%) rotate(2deg); }
+            100% { transform: translateX(-5%) rotate(2deg); }
+        }
+        
+        /* 装饰Logo */
+        .campus-logo {
+            position: absolute;
+            opacity: 0.7;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo1 {
+            top: 15%;
+            right: 10%;
+            animation: float-logo 20s ease-in-out infinite;
+        }
+        
+        .logo2 {
+            bottom: 20%;
+            left: 15%;
+            animation: float-logo 25s ease-in-out infinite;
+            animation-delay: 5s;
+        }
+        
+        .logo3 {
+            top: 60%;
+            right: 20%;
+            animation: float-logo 30s ease-in-out infinite;
+            animation-delay: 10s;
+        }
+        
+        @keyframes float-logo {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-10px, 15px) rotate(5deg); }
+            50% { transform: translate(15px, 5px) rotate(-5deg); }
+            75% { transform: translate(5px, -10px) rotate(3deg); }
+        }
+        
+        /* 点阵背景 */
+        .dot-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .dot {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            animation: pulse-dot 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+        }
+        
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        
+        .bubble1 {
+            width: 250px;
+            height: 250px;
+            top: 15%;
+            left: 10%;
+            animation: float1 20s ease-in-out infinite;
+        }
+        
+        .bubble2 {
+            width: 350px;
+            height: 350px;
+            top: 60%;
+            right: 5%;
+            animation: float2 25s ease-in-out infinite;
+        }
+        
+        .bubble3 {
+            width: 200px;
+            height: 200px;
+            bottom: 10%;
+            left: 20%;
+            animation: float3 15s ease-in-out infinite;
+        }
+        
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(50px, -30px); }
+        }
+        
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-40px, 40px); }
+        }
+        
+        @keyframes float3 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 30px); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .login-card {
+                padding: 30px 20px;
+            }
+        }
+        
+        /* 不规则流动线条 - 中部 */
+        .zigzag-line {
+            position: absolute;
+            z-index: 0;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        
+        .zigzag-line1 {
+            top: 30%;
+            left: -5%;
+            width: 110%;
+            height: 100px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' d='M0,50 L100,20 L200,80 L300,10 L400,90 L500,30 L600,70 L700,20 L800,60 L900,10 L1000,50 L1100,80 L1200,20'/%3E%3C/svg%3E") repeat-x;
+            background-size: 1200px 100px;
+            animation: zigzag1 30s linear infinite;
+        }
+        
+        .zigzag-line2 {
+            top: 50%;
+            right: -5%;
+            width: 110%;
+            height: 80px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' d='M0,80 L150,30 L300,70 L450,20 L600,60 L750,10 L900,50 L1050,20 L1200,70'/%3E%3C/svg%3E") repeat-x;
+            background-size: 1200px 80px;
+            animation: zigzag2 25s linear infinite;
+        }
+        
+        .zigzag-line3 {
+            bottom: 25%;
+            left: -10%;
+            width: 120%;
+            height: 120px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' d='M0,60 L120,20 L240,80 L360,40 L480,100 L600,20 L720,70 L840,30 L960,90 L1080,10 L1200,60'/%3E%3C/svg%3E") repeat-x;
+            background-size: 1200px 120px;
+            animation: zigzag3 35s linear infinite;
+        }
+        
+        @keyframes zigzag1 {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-1200px); }
+        }
+        
+        @keyframes zigzag2 {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(1200px); }
+        }
+        
+        @keyframes zigzag3 {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-1200px); }
+        }
+        
+        /* 不规则拐角线条 - 角落装饰 */
+        .corner-line {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+        
+        .corner-line1 {
+            top: 15%;
+            left: 10%;
+            width: 150px;
+            height: 150px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.8)' stroke-width='2' d='M0,50 L50,50 L50,0 M0,100 L100,100 L100,0 M0,150 L150,150 L150,0'/%3E%3C/svg%3E") no-repeat;
+            animation: rotate1 30s linear infinite;
+        }
+        
+        .corner-line2 {
+            top: 25%;
+            right: 10%;
+            width: 120px;
+            height: 120px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.8)' stroke-width='2' d='M0,0 L120,0 L120,40 M0,40 L80,40 L80,80 M0,80 L40,80 L40,120'/%3E%3C/svg%3E") no-repeat;
+            animation: rotate2 25s linear infinite;
+        }
+        
+        .corner-line3 {
+            bottom: 15%;
+            left: 15%;
+            width: 100px;
+            height: 100px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.8)' stroke-width='2' d='M0,0 L50,0 L50,50 L100,50 M0,50 L30,50 L30,100 M70,0 L70,30 L100,30'/%3E%3C/svg%3E") no-repeat;
+            animation: rotate3 20s linear infinite;
+        }
+        
+        .corner-line4 {
+            bottom: 20%;
+            right: 10%;
+            width: 140px;
+            height: 140px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 140'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.8)' stroke-width='2' d='M0,140 L0,70 L70,70 L70,0 M0,100 L40,100 L40,40 L100,40 L100,0'/%3E%3C/svg%3E") no-repeat;
+            animation: rotate4 35s linear infinite;
+        }
+        
+        @keyframes rotate1 {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes rotate2 {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+        
+        @keyframes rotate3 {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        
+        @keyframes rotate4 {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(-180deg) scale(0.9); }
+            100% { transform: rotate(-360deg) scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 流动背景 -->
+    <div class="flowing-lines">
+        <div class="line line1"></div>
+        <div class="line line2"></div>
+        <div class="line line3"></div>
+        <div class="line line4"></div>
+        <div class="bubble bubble1"></div>
+        <div class="bubble bubble2"></div>
+        <div class="bubble bubble3"></div>
+        
+        <!-- 不规则折线和拐角线 -->
+        <div class="zigzag-line zigzag-line1"></div>
+        <div class="zigzag-line zigzag-line2"></div>
+        <div class="zigzag-line zigzag-line3"></div>
+        
+        <div class="corner-line corner-line1"></div>
+        <div class="corner-line corner-line2"></div>
+        <div class="corner-line corner-line3"></div>
+        <div class="corner-line corner-line4"></div>
+    </div>
+    
+    <!-- 左侧装饰线条 -->
+    <div class="side-decoration left-decoration">
+        <svg viewBox="0 0 100 600" preserveAspectRatio="none">
+            <path class="deco-path" d="M0,0 Q30,150 10,300 T0,600" />
+            <path class="deco-path" d="M20,0 Q50,200 30,400 T20,600" stroke-dasharray="5,5" />
+            <path class="deco-path" d="M40,0 Q70,250 50,500 T40,600" />
+        </svg>
+    </div>
+    
+    <!-- 右侧装饰线条 -->
+    <div class="side-decoration right-decoration">
+        <svg viewBox="0 0 100 600" preserveAspectRatio="none">
+            <path class="deco-path" d="M100,0 Q70,150 90,300 T100,600" />
+            <path class="deco-path" d="M80,0 Q50,200 70,400 T80,600" stroke-dasharray="5,5" />
+            <path class="deco-path" d="M60,0 Q30,250 50,500 T60,600" />
+        </svg>
+    </div>
+    
+    <!-- 中间部分装饰线 -->
+    <div class="middle-lines">
+        <div class="middle-line"></div>
+        <div class="middle-line"></div>
+        <div class="middle-line"></div>
+    </div>
+    
+    <!-- 底部波浪装饰 -->
+    <div class="bottom-waves">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M0,0 Q150,40 300,20 T600,40 T900,20 T1200,0 V120 H0 Z" fill="rgba(255,255,255,0.05)"></path>
+            <path d="M0,30 Q150,70 300,50 T600,70 T900,50 T1200,30 V120 H0 Z" fill="rgba(255,255,255,0.1)"></path>
+        </svg>
+    </div>
+    
+    <!-- 点阵装饰 -->
+    <div class="dot-grid"></div>
+    
+    <!-- 校园logo装饰 -->
+    <div class="campus-logo logo1">
+        <svg viewBox="0 0 100 100" width="60" height="60">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2" />
+            <path d="M30,50 L50,30 L70,50 L50,70 Z" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2" />
+            <circle cx="50" cy="50" r="10" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2" />
+        </svg>
+    </div>
+    
+    <div class="campus-logo logo2">
+        <svg viewBox="0 0 100 100" width="80" height="80">
+            <rect x="25" y="25" width="50" height="50" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2" transform="rotate(45, 50, 50)" />
+            <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+            <path d="M35,50 L65,50 M50,35 L50,65" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+        </svg>
+    </div>
+    
+    <div class="campus-logo logo3">
+        <svg viewBox="0 0 100 100" width="70" height="70">
+            <polygon points="50,20 80,50 50,80 20,50" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2" />
+            <circle cx="50" cy="50" r="20" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2" />
+            <path d="M30,30 L70,70 M30,70 L70,30" stroke="rgba(255,255,255,0.2)" stroke-width="2" />
+        </svg>
+    </div>
+    
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo">
+                <h1>校园综合服务平台</h1>
+                <p>登录您的账户</p>
+            </div>
+            
+            <form method="post" action="{% url 'users:login' %}">
+                {% csrf_token %}
+                
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="error">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" placeholder="请输入用户名" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" placeholder="请输入密码" required>
+                </div>
+                
+                <button type="submit" class="login-btn">登录</button>
+                
+                <div class="form-footer">
+                    <p>没有账号？<a href="{% url 'users:register' %}">立即注册</a></p>
+                    <p><a href="{% url 'users:forgot_password' %}">忘记密码？</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // 高级鼠标移动效果
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            // 创建鼠标位置变量，值从-1到1
+            const normalizedX = (mouseX - 0.5) * 2;
+            const normalizedY = (mouseY - 0.5) * 2;
+            
+            // 为每条线应用独特的变形效果
+            document.querySelectorAll('.line').forEach((line, index) => {
+                const speed = index + 1;
+                const offsetX = normalizedX * 15 * speed;
+                const offsetY = normalizedY * 10 * speed;
+                const skewX = normalizedY * 2; 
+                const skewY = normalizedX * 2;
+                const scale = 1 + Math.abs(normalizedX * normalizedY) * 0.05;
+                
+                line.style.transform = `translate(${offsetX}px, ${offsetY}px) skew(${skewX}deg, ${skewY}deg) scale(${scale})`;
+            });
+            
+            // 气泡跟随鼠标移动
+            document.querySelectorAll('.bubble').forEach((bubble, index) => {
+                const distance = index + 1;
+                const offsetX = normalizedX * 40 * distance;
+                const offsetY = normalizedY * 40 * distance;
+                const rotation = (normalizedX * normalizedY) * 10;
+                const scale = 1 + Math.abs(normalizedX * normalizedY) * 0.1;
+                
+                bubble.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotation}deg) scale(${scale})`;
+            });
+            
+            // 侧边装饰线条跟随鼠标
+            document.querySelectorAll('.side-decoration').forEach((deco, index) => {
+                const moveX = normalizedX * (index === 0 ? -10 : 10);
+                const moveY = normalizedY * 5;
+                deco.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            });
+            
+            // 中间线条跟随鼠标
+            document.querySelectorAll('.middle-line').forEach((line, index) => {
+                const moveX = normalizedX * 15 * (index + 1);
+                line.style.transform = `translateX(${moveX}px) rotate(${line.dataset.rotation || 0}deg)`;
+            });
+            
+            // 装饰Logo跟随鼠标并旋转
+            document.querySelectorAll('.campus-logo').forEach((logo, index) => {
+                const moveRadius = 15 * (index + 1);
+                const rotateAmount = 5 * (index + 1);
+                logo.style.transform = `translate(${normalizedX * moveRadius}px, ${normalizedY * moveRadius}px) rotate(${normalizedX * normalizedY * rotateAmount}deg)`;
+            });
+            
+            // 底部波浪效果
+            const bottomWaves = document.querySelector('.bottom-waves');
+            if (bottomWaves) {
+                bottomWaves.style.transform = `translateY(${normalizedY * 10}px)`;
+            }
+            
+            // 登录卡片微妙浮动效果
+            const loginCard = document.querySelector('.login-card');
+            if (loginCard) {
+                loginCard.style.transform = `translate(${normalizedX * 5}px, ${normalizedY * 5}px)`;
+            }
+        });
+        
+        // 输入框焦点效果
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.previousElementSibling.style.color = '#6a3093';
+                input.style.borderColor = '#6a3093';
+            });
+            
+            input.addEventListener('blur', () => {
+                if (!input.value) {
+                    input.previousElementSibling.style.color = 'var(--text-color)';
+                    input.style.borderColor = 'var(--border-color)';
+                }
+            });
+        });
+        
+        // 创建点阵背景
+        const createDotGrid = () => {
+            const grid = document.querySelector('.dot-grid');
+            const dotSize = 3;
+            const gapSize = 30;
+            const rows = Math.ceil(window.innerHeight / gapSize);
+            const cols = Math.ceil(window.innerWidth / gapSize);
+            
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    if (Math.random() > 0.7) { // 只创建30%的点，减少密度
+                        const dot = document.createElement('div');
+                        dot.className = 'dot';
+                        dot.style.top = `${r * gapSize}px`;
+                        dot.style.left = `${c * gapSize}px`;
+                        dot.style.width = `${dotSize}px`;
+                        dot.style.height = `${dotSize}px`;
+                        dot.style.animationDelay = `${Math.random() * 5}s`;
+                        grid.appendChild(dot);
+                    }
+                }
+            }
+        };
+        
+        // 保存中间线条的初始旋转值
+        document.addEventListener('DOMContentLoaded', () => {
+            const middleLines = document.querySelectorAll('.middle-line');
+            middleLines[0].dataset.rotation = '5';
+            middleLines[1].dataset.rotation = '-3';
+            middleLines[2].dataset.rotation = '2';
+            
+            // 创建点阵
+            createDotGrid();
+        });
+        
+        // 为不规则折线应用移动效果
+        document.querySelectorAll('.zigzag-line').forEach((line, index) => {
+            const distance = index + 1;
+            const rotateAmount = 2 * (index + 1);
+            line.style.transform = `translateY(${normalizedY * 10 * distance}px) rotate(${normalizedX * rotateAmount}deg)`;
+        });
+        
+        // 为不规则拐角线条应用效果
+        document.querySelectorAll('.corner-line').forEach((line, index) => {
+            const distance = index + 1;
+            const scaleAmount = 0.05 * (index + 1);
+            line.style.transform = `translate(${normalizedX * 15 * distance}px, ${normalizedY * 15 * distance}px) scale(${1 + Math.abs(normalizedX * normalizedY) * scaleAmount})`;
+        });
+    </script>
+</body>
+</html>

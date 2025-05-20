@@ -1,0 +1,23 @@
+{% load static %}
+<!-- 装饰背景元素 - 可以被其他模板包含使用 -->
+<link rel="stylesheet" href="{% static 'css/decorations.css' %}">
+
+<div class="flowing-background">
+  <div class="decorative-line"></div>
+  <div class="decorative-line"></div>
+  <div class="decorative-line"></div>
+  <div class="decorative-line"></div>
+  <div class="decorative-shape"></div>
+  <div class="decorative-shape"></div>
+  <div class="decorative-shape"></div>
+  <img src="{% static 'images/book-logo.svg' %}" class="mini-logo" alt="装饰">
+  <img src="{% static 'images/chat-logo.svg' %}" class="mini-logo" alt="装饰">
+  <img src="{% static 'images/heart-logo.svg' %}" class="mini-logo" alt="装饰">
+  <img src="{% static 'images/star-logo.svg' %}" class="mini-logo" alt="装饰">
+  <!-- 添加20个装饰点 -->
+  {% for i in "12345678901234567890" %}
+  <div class="decorative-dot"></div>
+  {% endfor %}
+  <div class="wave"></div>
+  <div class="wave"></div>
+</div> 

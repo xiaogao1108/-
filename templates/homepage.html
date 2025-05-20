@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>校园综合服务平台</title>
+	<link rel="stylesheet" href="{% static 'css/common.css' %}">
+	<link rel="stylesheet" href="{% static 'css/animations.css' %}">
+	<link rel="stylesheet" href="{% static 'css/homepage-css.css' %}">
+	<link rel="stylesheet" href="{% static 'css/decorations.css' %}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="homepage">
+
+<!-- 页面加载动画 -->
+<div class="page-loader">
+  <div class="loader-content">
+    <div class="loader"></div>
+    <p class="fade-in">加载中，请稍候...</p>
+  </div>
+</div>
+
+<!-- 滚动进度条 -->
+<div class="scroll-progress"></div>
+
+<!-- 装饰背景 -->
+<div class="flowing-background">
+  <div class="decorative-line"></div>
+  <div class="decorative-line"></div>
+  <div class="decorative-line"></div>
+  <div class="decorative-line"></div>
+  <div class="decorative-shape"></div>
+  <div class="decorative-shape"></div>
+  <div class="decorative-shape"></div>
+  <img src="{% static 'images/book-logo.svg' %}" class="mini-logo" alt="装饰">
+  <img src="{% static 'images/chat-logo.svg' %}" class="mini-logo" alt="装饰">
+  <img src="{% static 'images/heart-logo.svg' %}" class="mini-logo" alt="装饰">
+  <!-- 添加20个装饰点 -->
+  {% for i in "12345678901234567890" %}
+  <div class="decorative-dot"></div>
+  {% endfor %}
+  <div class="wave"></div>
+  <div class="wave"></div>
+</div>
+
+<!-- 新增流动效果元素 -->
+<div class="particle-system">
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+</div>
+
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+
+<div class="ripple-ring"></div>
+<div class="ripple-ring"></div>
+<div class="ripple-ring"></div>
+<div class="ripple-ring"></div>
+
+<!-- 顶部导航栏 -->
+<header>
+	<div class="navbar">
+		<div class="nav-links">
+			<ul>
+				<li><a href="{% url 'homepage:homepage' %}" class="active">首页</a></li>
+				<li><a href="{% url 'activities:activities' %}">社团活动</a></li>
+				<li><a href="{% url 'materials:materials'%}">课件共享</a></li>
+				<li><a href="{% url 'forum:forum' %}">论坛</a></li>
+				<li><a href="{% url 'confess:confess' %}">表白墙</a></li>
+				<li><a href="{% url 'lostfound:lost_found_page' %}">失物招领</a></li>
+				<!-- 二手市场功能暂时隐藏 -->
+				<li><a href="{% url 'news:news' %}">校园火榜</a></li>
+			</ul>
+		</div>
+		<div class="user-area">
+			<a href="{% url 'users:logout' %}" class="logout">退出登录</a>
+			<!-- 当前头像 -->
+			{% if user.avatar %}
+			<img id="current-avatar" src="{{ user.avatar.url }}" class="avatar-circle hover-scale" alt="头像" onerror="this.src='/media/default_avatars/1.jpg'">
+			{% elif user.default_avatar %}
+			<img id="current-avatar" src="/media/{{ user.default_avatar }}" class="avatar-circle hover-scale" alt="默认头像" onerror="this.src='/media/default_avatars/1.jpg'">
+			{% else %}
+			<img id="current-avatar" src="/media/default_avatars/1.jpg" class="avatar-circle hover-scale" alt="默认头像">
+			{% endif %}
+
+			<!-- 头像选择弹窗 -->
+			<div id="avatar-selector" class="avatar-selector hidden">
+				<h3 class="avatar-selector-title">选择头像</h3>
+				<div class="avatar-grid">
+					<!-- 默认头像列表 -->
+					{% for i in avatar_range %}
+					<img src="/media/default_avatars/{{ i }}.jpg" class="avatar-option hover-scale" data-path="default_avatars/{{ i }}.jpg">
+					{% endfor %}
+				</div>
+				<!-- 自定义头像上传 -->
+				<form method="post" enctype="multipart/form-data" action="{% url 'homepage:upload_avatar' %}">
+					{% csrf_token %}
+					<label class="custom-upload hover-lift">
+						<i class="fas fa-upload"></i> 上传自定义头像
+						<input type="file" name="avatar" accept="image/*">
+					</label>
+				</form>
+			</div>
+		</div>
+	</div>
+</header>
+
+<div class="main-container page-background">
+    <!-- 英雄区域 -->
+    <section class="hero gradient-animation reduced-height">
+        <div class="hero-content">
+            <h1 class="fade-in-down">欢迎来到校园综合服务平台</h1>
+            <p class="typing-text fade-in-up delay-300" data-speed="80" data-delay="500">为您提供一站式校园生活解决方案</p>
+            <div class="hero-cta fade-in delay-600">
+                <a href="#services" class="btn btn-outline hover-lift">了解更多</a>
+            </div>
+        </div>
+        <div class="hero-shapes">
+            <div class="hero-shape shape1 float"></div>
+            <div class="hero-shape shape2 float-strong delay-200"></div>
+            <div class="hero-shape shape3 float delay-400"></div>
+        </div>
+    </section>
+
+    <!-- 服务特色区域 -->
+    <section id="services" class="services">
+        <div class="service-header">
+            <h2 class="section-title reveal reveal-up">校园服务</h2>
+            <div class="section-line"></div>
+        </div>
+        <div class="services-grid">
+            <div class="service-card card reveal reveal-left chain-item hover-lift">
+                <div class="service-icon lost-found-icon pulse"></div>
+                <h3><a href="{% url 'lostfound:lost_found_page' %}">失物招领</a></h3>
+                <p>帮助同学们找回遗失的物品，提供失物信息的发布和查找服务。</p>
+                <a href="{% url 'lostfound:lost_found_page' %}" class="btn btn-outline hover-lift">查看详情</a>
+            </div>
+            <!-- 二手市场功能暂时隐藏 -->
+            <div class="service-card card reveal reveal-right delay-400 chain-item hover-lift">
+                <div class="service-icon news-icon pulse"></div>
+                <h3><a href="{% url 'news:news' %}">校园火榜</a></h3>
+                <p>为同学们提供最新的校园活动、通知和新闻。</p>
+                <a href="{% url 'news:news' %}" class="btn btn-outline hover-lift">阅读新闻</a>
+            </div>
+            <div class="service-card card reveal reveal-left chain-item hover-lift">
+                <div class="service-icon activities-icon pulse"></div>
+                <h3><a href="{% url 'activities:activities' %}">社团活动</a></h3>
+                <p>展示校内社团丰富多彩的活动，方便同学们参与校园文化生活。</p>
+                <a href="{% url 'activities:activities' %}" class="btn btn-outline hover-lift">浏览活动</a>
+            </div>
+            <div class="service-card card reveal reveal-up delay-200 chain-item hover-lift">
+                <div class="service-icon materials-icon pulse"></div>
+                <h3><a href="{% url 'materials:materials' %}">课件共享</a></h3>
+                <p>提供各类学习资料和课件的分享平台，促进学习资源共享。</p>
+                <a href="{% url 'materials:materials' %}" class="btn btn-outline hover-lift">查看资料</a>
+            </div>
+            <div class="service-card card reveal reveal-right delay-400 chain-item hover-lift">
+                <div class="service-icon forum-icon pulse"></div>
+                <h3><a href="{% url 'forum:forum' %}">论坛</a></h3>
+                <p>校园互动交流平台，分享经验、讨论问题、寻求帮助。</p>
+                <a href="{% url 'forum:forum' %}" class="btn btn-outline hover-lift">进入论坛</a>
+            </div>
+            <div class="service-card card reveal reveal-left chain-item hover-lift">
+                <div class="service-icon confess-icon pulse"></div>
+                <h3><a href="{% url 'confess:confess' %}">表白墙</a></h3>
+                <p>匿名表达心意的平台，传递校园温暖与感动。</p>
+                <a href="{% url 'confess:confess' %}" class="btn btn-outline hover-lift">去表白</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 间隔区域 -->
+    <div class="spacer"></div>
+</div>
+
+<!-- 回到顶部按钮 -->
+<button class="scroll-to-top hover-scale">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 19V5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5 12L12 5L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</button>
+
+<!-- 页脚 -->
+<footer>
+    <div class="footer-content">
+        <div class="footer-section about">
+            <h3>校园综合服务平台</h3>
+            <p>为校园生活提供全方位服务解决方案</p>
+            <p>我们致力于打造便捷、高效的校园服务生态系统，让每位师生的校园生活更加便利多彩。</p>
+        </div>
+        <div class="footer-section links">
+            <h3>快速链接</h3>
+            <div class="quick-links">
+                <ul>
+                    <li><a href="{% url 'homepage:homepage' %}">首页</a></li>
+                    <li><a href="{% url 'activities:activities' %}">社团活动</a></li>
+                    <li><a href="{% url 'materials:materials' %}">课件共享</a></li>
+                    <li><a href="{% url 'forum:forum' %}">论坛</a></li>
+                </ul>
+                <ul>
+                    <li><a href="{% url 'confess:confess' %}">表白墙</a></li>
+                    <li><a href="{% url 'lostfound:lost_found_page' %}">失物招领</a></li>
+                    <li><a href="{% url 'news:news' %}">校园火榜</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-section">
+            <h3>联系我们</h3>
+            <p>邮箱: 18487400201@163.com</p>
+            <p>电话: 184-8740-0201</p>
+            <p>地址: 云南省昆明市呈贡区景明南路727号</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 校园综合服务平台 | All rights reserved</p>
+    </div>
+</footer>
+
+<script src="{% static 'js/jquery-3.7.1.js' %}"></script>
+<script src="{% static 'js/scroll-animations.js' %}"></script>
+<script src="{% static 'js/avatar-handler.js' %}"></script>
+<script>
+	// 退出登录确认
+	document.querySelector('.logout').addEventListener('click', function(e) {
+		e.preventDefault();
+		const confirmed = confirm("确定退出登录吗？");
+		if (confirmed) {
+			window.location.href = this.href;
+		}
+	});
+</script>
+
+</body>
+</html>

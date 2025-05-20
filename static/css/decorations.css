@@ -1,0 +1,405 @@
+/* 装饰元素 CSS - 为网站添加动态视觉效果 */
+
+/* 流动背景 */
+.flowing-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+/* 装饰线条 */
+.decorative-line {
+    position: absolute;
+    background: linear-gradient(90deg, rgba(58, 134, 255, 0), rgba(58, 134, 255, 0.2), rgba(58, 134, 255, 0));
+    height: 1px;
+    width: 100%;
+    transform-origin: center;
+    animation: flow 15s infinite linear;
+    opacity: 0.7;
+}
+
+.decorative-line:nth-child(1) {
+    top: 15%;
+    animation-duration: 20s;
+    transform: rotate(1deg);
+}
+
+.decorative-line:nth-child(2) {
+    top: 35%;
+    animation-duration: 25s;
+    animation-delay: 2s;
+    transform: rotate(-1deg);
+}
+
+.decorative-line:nth-child(3) {
+    top: 55%;
+    animation-duration: 22s;
+    animation-delay: 5s;
+    transform: rotate(0.5deg);
+}
+
+.decorative-line:nth-child(4) {
+    top: 75%;
+    animation-duration: 28s;
+    animation-delay: 7s;
+    transform: rotate(-0.7deg);
+}
+
+/* 不规则形状 */
+.decorative-shape {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(108, 92, 231, 0.1) 0%, rgba(108, 92, 231, 0) 70%);
+    animation: float 20s infinite ease-in-out;
+}
+
+.decorative-shape:nth-child(5) {
+    width: 300px;
+    height: 300px;
+    top: 10%;
+    right: -100px;
+    animation-duration: 30s;
+    animation-delay: 0s;
+}
+
+.decorative-shape:nth-child(6) {
+    width: 200px;
+    height: 200px;
+    bottom: 20%;
+    left: -80px;
+    animation-duration: 25s;
+    animation-delay: 5s;
+}
+
+.decorative-shape:nth-child(7) {
+    width: 150px;
+    height: 150px;
+    top: 40%;
+    right: 10%;
+    animation-duration: 20s;
+    animation-delay: 10s;
+}
+
+/* 小logo */
+.mini-logo {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    opacity: 0.8;
+    animation: pulse 3s infinite ease-in-out, float 15s infinite ease-in-out;
+}
+
+.mini-logo:nth-child(8) {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.mini-logo:nth-child(9) {
+    top: 70%;
+    right: 15%;
+    animation-delay: 1s;
+}
+
+.mini-logo:nth-child(10) {
+    bottom: 15%;
+    left: 20%;
+    animation-delay: 2s;
+}
+
+.mini-logo:nth-child(11) {
+    top: 40%;
+    right: 5%;
+    animation-delay: 3s;
+}
+
+/* 点阵装饰 */
+.decorative-dot {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: rgba(131, 56, 236, 0.2);
+    animation: pulse 4s infinite ease-in-out;
+}
+
+/* 使用CSS变量设置随机位置（浏览器支持的情况下） */
+.decorative-dot:nth-child(12) { top: 25%; left: 15%; animation-delay: 0.4s; }
+.decorative-dot:nth-child(13) { top: 35%; left: 85%; animation-delay: 0.6s; }
+.decorative-dot:nth-child(14) { top: 75%; left: 25%; animation-delay: 0.8s; }
+.decorative-dot:nth-child(15) { top: 20%; left: 45%; animation-delay: 1.0s; }
+.decorative-dot:nth-child(16) { top: 65%; left: 60%; animation-delay: 1.2s; }
+.decorative-dot:nth-child(17) { top: 45%; left: 75%; animation-delay: 1.4s; }
+.decorative-dot:nth-child(18) { top: 15%; left: 65%; animation-delay: 1.6s; }
+.decorative-dot:nth-child(19) { top: 85%; left: 35%; animation-delay: 1.8s; }
+.decorative-dot:nth-child(20) { top: 55%; left: 5%; animation-delay: 2.0s; }
+.decorative-dot:nth-child(21) { top: 82%; left: 82%; animation-delay: 2.2s; }
+.decorative-dot:nth-child(22) { top: 30%; left: 92%; animation-delay: 2.4s; }
+.decorative-dot:nth-child(23) { top: 90%; left: 10%; animation-delay: 2.6s; }
+.decorative-dot:nth-child(24) { top: 10%; left: 30%; animation-delay: 2.8s; }
+.decorative-dot:nth-child(25) { top: 50%; left: 50%; animation-delay: 3.0s; }
+.decorative-dot:nth-child(26) { top: 70%; left: 20%; animation-delay: 3.2s; }
+.decorative-dot:nth-child(27) { top: 40%; left: 40%; animation-delay: 3.4s; }
+.decorative-dot:nth-child(28) { top: 60%; left: 90%; animation-delay: 3.6s; }
+.decorative-dot:nth-child(29) { top: 27%; left: 73%; animation-delay: 3.8s; }
+.decorative-dot:nth-child(30) { top: 63%; left: 37%; animation-delay: 4.0s; }
+.decorative-dot:nth-child(31) { top: 38%; left: 62%; animation-delay: 4.2s; }
+
+/* 波浪效果 */
+.wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(131, 56, 236, 0.05)" fill-opacity="1" d="M0,32L48,53.3C96,75,192,117,288,133.3C384,149,480,139,576,122.7C672,107,768,85,864,80C960,75,1056,85,1152,96C1248,107,1344,117,1392,122.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0.3;
+    animation: wave 20s linear infinite;
+}
+
+.wave:nth-child(31) {
+    opacity: 0.2;
+    animation-delay: 5s;
+    animation-duration: 15s;
+    background-position-x: 30%;
+}
+
+.wave:nth-child(32) {
+    opacity: 0.1;
+    animation-delay: 10s;
+    animation-duration: 25s;
+    background-position-x: 60%;
+}
+
+/* 新增：流动粒子系统 */
+.particle-system {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    opacity: 0.2;
+    transform-origin: center;
+    animation: particle-float 20s infinite ease-in-out;
+}
+
+/* 创建多个粒子，每个有不同的大小和动画 */
+.particle:nth-child(1) { width: 120px; height: 120px; top: 15%; left: 10%; animation-duration: 25s; }
+.particle:nth-child(2) { width: 80px; height: 80px; top: 75%; left: 20%; animation-duration: 18s; animation-delay: 2s; }
+.particle:nth-child(3) { width: 60px; height: 60px; top: 50%; left: 80%; animation-duration: 22s; animation-delay: 1s; }
+.particle:nth-child(4) { width: 100px; height: 100px; top: 20%; left: 60%; animation-duration: 28s; animation-delay: 3s; }
+.particle:nth-child(5) { width: 90px; height: 90px; top: 85%; left: 70%; animation-duration: 20s; animation-delay: 5s; }
+
+/* 新增：动态流动线段 */
+.flow-line {
+    position: absolute;
+    width: 150px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(var(--primary-rgb), 0.3), transparent);
+    transform-origin: center;
+    animation: flow-line 15s infinite linear;
+}
+
+.flow-line:nth-child(1) { top: 20%; left: 30%; transform: rotate(30deg); animation-duration: 18s; }
+.flow-line:nth-child(2) { top: 40%; left: 70%; transform: rotate(-20deg); animation-duration: 20s; animation-delay: 1s; }
+.flow-line:nth-child(3) { top: 60%; left: 20%; transform: rotate(45deg); animation-duration: 15s; animation-delay: 3s; }
+.flow-line:nth-child(4) { top: 80%; left: 60%; transform: rotate(-40deg); animation-duration: 22s; animation-delay: 2s; }
+.flow-line:nth-child(5) { top: 30%; left: 50%; transform: rotate(15deg); animation-duration: 17s; animation-delay: 4s; }
+
+/* 新增：发光斑点 */
+.glow-spot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(var(--accent-rgb), 0.6) 0%, rgba(var(--accent-rgb), 0) 70%);
+    opacity: 0;
+    animation: glow 10s infinite ease-in-out;
+}
+
+.glow-spot:nth-child(1) { top: 25%; left: 40%; animation-delay: 0s; }
+.glow-spot:nth-child(2) { top: 65%; left: 25%; animation-delay: 2s; }
+.glow-spot:nth-child(3) { top: 45%; left: 75%; animation-delay: 4s; }
+.glow-spot:nth-child(4) { top: 85%; left: 55%; animation-delay: 6s; }
+.glow-spot:nth-child(5) { top: 15%; left: 65%; animation-delay: 8s; }
+
+/* 新增：扩散环 */
+.ripple-ring {
+    position: absolute;
+    border: 1px solid rgba(var(--secondary-rgb), 0.3);
+    border-radius: 50%;
+    opacity: 0;
+    animation: ripple 8s infinite ease-out;
+}
+
+.ripple-ring:nth-child(1) { width: 50px; height: 50px; top: 30%; left: 20%; animation-delay: 0s; }
+.ripple-ring:nth-child(2) { width: 70px; height: 70px; top: 70%; left: 40%; animation-delay: 2s; }
+.ripple-ring:nth-child(3) { width: 60px; height: 60px; top: 40%; left: 80%; animation-delay: 4s; }
+.ripple-ring:nth-child(4) { width: 80px; height: 80px; top: 20%; left: 70%; animation-delay: 6s; }
+
+/* 新增：动画定义 */
+@keyframes particle-float {
+    0%, 100% { transform: translateY(0) translateX(0) scale(1); opacity: 0.15; }
+    25% { transform: translateY(30px) translateX(20px) scale(1.05); opacity: 0.2; }
+    50% { transform: translateY(0) translateX(40px) scale(1); opacity: 0.15; }
+    75% { transform: translateY(-30px) translateX(20px) scale(0.95); opacity: 0.2; }
+}
+
+@keyframes flow-line {
+    0% { transform: translateX(-100px) rotate(var(--rotate, 30deg)); opacity: 0; }
+    20% { opacity: 0.7; }
+    80% { opacity: 0.7; }
+    100% { transform: translateX(calc(100vw + 100px)) rotate(var(--rotate, 30deg)); opacity: 0; }
+}
+
+@keyframes glow {
+    0%, 100% { transform: scale(1); opacity: 0; }
+    50% { transform: scale(8); opacity: 0.5; }
+}
+
+@keyframes ripple {
+    0% { transform: scale(0); opacity: 0.7; }
+    100% { transform: scale(6); opacity: 0; }
+}
+
+/* 动画定义 */
+@keyframes flow {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(20px) rotate(2deg);
+    }
+    50% {
+        transform: translateY(0) rotate(0deg);
+    }
+    75% {
+        transform: translateY(-20px) rotate(-2deg);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes wave {
+    0% {
+        background-position-x: 0%;
+    }
+    100% {
+        background-position-x: 100%;
+    }
+}
+
+/* 页面特定装饰 */
+.content-decoration {
+    position: relative;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 页面特定装饰风格 */
+/* 主页 */
+body.homepage .decorative-line {
+    background: linear-gradient(90deg, rgba(58, 134, 255, 0), rgba(58, 134, 255, 0.3), rgba(58, 134, 255, 0));
+}
+
+body.homepage .decorative-dot {
+    background-color: rgba(58, 134, 255, 0.3);
+}
+
+/* 论坛页面 */
+body.forum .decorative-line {
+    background: linear-gradient(90deg, rgba(131, 56, 236, 0), rgba(131, 56, 236, 0.3), rgba(131, 56, 236, 0));
+}
+
+body.forum .decorative-dot {
+    background-color: rgba(131, 56, 236, 0.3);
+}
+
+/* 表白墙页面 */
+body.confess .decorative-line {
+    background: linear-gradient(90deg, rgba(255, 0, 110, 0), rgba(255, 0, 110, 0.3), rgba(255, 0, 110, 0));
+}
+
+body.confess .decorative-dot {
+    background-color: rgba(255, 0, 110, 0.3);
+}
+
+/* 课件共享页面 */
+body.materials .decorative-line {
+    background: linear-gradient(90deg, rgba(56, 176, 0, 0), rgba(56, 176, 0, 0.3), rgba(56, 176, 0, 0));
+}
+
+body.materials .decorative-dot {
+    background-color: rgba(56, 176, 0, 0.3);
+}
+
+/* 活动页面 */
+body.activities .decorative-line {
+    background: linear-gradient(90deg, rgba(255, 190, 11, 0), rgba(255, 190, 11, 0.3), rgba(255, 190, 11, 0));
+}
+
+body.activities .decorative-dot {
+    background-color: rgba(255, 190, 11, 0.3);
+}
+
+/* 新闻页面 */
+body.campusnews .decorative-line {
+    background: linear-gradient(90deg, rgba(58, 134, 255, 0), rgba(58, 134, 255, 0.3), rgba(58, 134, 255, 0));
+}
+
+body.campusnews .decorative-dot {
+    background-color: rgba(58, 134, 255, 0.3);
+}
+
+/* 失物招领页面 */
+body.lostfound .decorative-line {
+    background: linear-gradient(90deg, rgba(131, 56, 236, 0), rgba(131, 56, 236, 0.3), rgba(131, 56, 236, 0));
+}
+
+body.lostfound .decorative-dot {
+    background-color: rgba(131, 56, 236, 0.3);
+}
+
+@media (max-width: 768px) {
+    .mini-logo, .decorative-shape {
+        display: none;
+    }
+    
+    .decorative-line {
+        opacity: 0.4;
+    }
+} 

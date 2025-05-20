@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>课件共享区 - 校园综合服务平台</title>
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}">
+    <link rel="stylesheet" href="{% static 'css/materials-css.css' %}">
+    <link rel="stylesheet" href="{% static 'css/decorations.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="materials">
+
+<!-- 页面加载动画 -->
+<div class="page-loader">
+    <div class="loader-content">
+        <div class="loader"></div>
+        <p class="fade-in">加载中，请稍候...</p>
+    </div>
+</div>
+
+<!-- 滚动进度条 -->
+<div class="scroll-progress"></div>
+
+<!-- 装饰背景 -->
+<div class="flowing-background">
+    <div class="decorative-line"></div>
+    <div class="decorative-line"></div>
+    <div class="decorative-line"></div>
+    <div class="decorative-line"></div>
+    <div class="decorative-shape"></div>
+    <div class="decorative-shape"></div>
+    <div class="decorative-shape"></div>
+    <img src="{% static 'images/book-logo.svg' %}" class="mini-logo" alt="装饰">
+    <img src="{% static 'images/chat-logo.svg' %}" class="mini-logo" alt="装饰">
+    <img src="{% static 'images/heart-logo.svg' %}" class="mini-logo" alt="装饰">
+    <!-- 添加20个装饰点 -->
+    {% for i in "12345678901234567890" %}
+    <div class="decorative-dot"></div>
+    {% endfor %}
+    <div class="wave"></div>
+    <div class="wave"></div>
+</div>
+
+<!-- 顶部导航栏 -->
+<header>
+    <div class="navbar">
+        <div class="nav-links">
+            <ul>
+                <li><a href="{% url 'homepage:homepage' %}">首页</a></li>
+                <li><a href="{% url 'activities:activities' %}">社团活动</a></li>
+                <li><a href="{% url 'materials:materials'%}" class="active">课件共享</a></li>
+                <li><a href="{% url 'forum:forum' %}">论坛</a></li>
+                <li><a href="{% url 'confess:confess' %}">表白墙</a></li>
+                <li><a href="{% url 'lostfound:lost_found_page' %}">失物招领</a></li>
+                <!-- 二手市场功能暂时隐藏 -->
+                <li><a href="{% url 'news:news' %}">校园火榜</a></li>
+            </ul>
+        </div>
+        <div class="user-area">
+            <a href="{% url 'users:logout' %}" class="logout">退出登录</a>
+            <!-- 当前头像 -->
+            {% if user.avatar %}
+            <img id="current-avatar" src="{{ user.avatar.url }}" class="avatar-circle hover-scale" alt="头像" onerror="this.src='/media/default_avatars/1.jpg'">
+            {% elif user.default_avatar %}
+            <img id="current-avatar" src="/media/{{ user.default_avatar }}" class="avatar-circle hover-scale" alt="默认头像" onerror="this.src='/media/default_avatars/1.jpg'">
+            {% else %}
+            <img id="current-avatar" src="/media/default_avatars/1.jpg" class="avatar-circle hover-scale" alt="默认头像">
+            {% endif %}
+
+            <!-- 头像选择弹窗 -->
+            <div id="avatar-selector" class="avatar-selector hidden">
+                <h3 class="avatar-selector-title">选择头像</h3>
+                <div class="avatar-grid">
+                    <!-- 默认头像列表 -->
+                    {% for i in avatar_range %}
+                    <img src="/media/default_avatars/{{ i }}.jpg" class="avatar-option hover-scale" data-path="default_avatars/{{ i }}.jpg">
+                    {% endfor %}
+                </div>
+                <!-- 自定义头像上传 -->
+                <form method="post" enctype="multipart/form-data" action="{% url 'homepage:upload_avatar' %}">
+                    {% csrf_token %}
+                    <label class="custom-upload hover-lift">
+                        <i class="fas fa-upload"></i> 上传自定义头像
+                        <input type="file" name="avatar" accept="image/*" onchange="this.form.submit()">
+                    </label>
+                </form>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- 英雄区域 -->
+<section class="hero gradient-animation">
+    <div class="hero-content">
+        <h1 class="fade-in-down">课件共享区</h1>
+        <p class="typing-text fade-in-up delay-300" data-speed="80" data-delay="500">上传课件、共享知识、助力学习</p>
+        <div class="hero-cta fade-in delay-600">
+            <a href="#" id="show-upload-form" class="btn btn-outline hover-lift">上传课件</a>
+        </div>
+    </div>
+    <div class="hero-shapes">
+        <div class="hero-shape shape1 float"></div>
+        <div class="hero-shape shape2 float-strong delay-200"></div>
+        <div class="hero-shape shape3 float delay-400"></div>
+    </div>
+</section>
+
+<!-- 课件列表区域 -->
+<section class="materials-list reveal reveal-up delay-200">
+    <div class="materials-header">
+        <h2 class="section-title">课件列表</h2>
+        <div class="section-line"></div>
+        <div class="materials-search">
+            <input type="text" id="materials-search-input" placeholder="搜索课件...">
+            <button id="materials-search-btn" class="btn btn-secondary hover-lift">搜索</button>
+        </div>
+    </div>
+
+    <div class="materials-grid">
+        {% for material in materials %}
+        <article class="material-card reveal reveal-left chain-item hover-lift" data-material-id="{{ material.id }}">
+            <div class="material-icon-container">
+                <!-- 根据文件类型显示不同图标 -->
+                <div class="file-icon file-icon-{{ material.file.url|slice:"-3:" }}">
+                    {% if material.file.url|slice:"-3:" == "pdf" %}
+                    <img src="{% static 'images/pdf-icon.svg' %}" alt="PDF文件">
+                    {% elif material.file.url|slice:"-3:" == "doc" or material.file.url|slice:"-4:" == "docx" %}
+                    <img src="{% static 'images/doc-icon.svg' %}" alt="Word文件">
+                    {% elif material.file.url|slice:"-2:" == "md" %}
+                    <img src="{% static 'images/md-icon.svg' %}" alt="Markdown文件">
+                    {% elif material.file.url|slice:"-3:" == "jpg" or material.file.url|slice:"-3:" == "png" or material.file.url|slice:"-4:" == "jpeg" %}
+                    <img src="{% static 'images/img-icon.svg' %}" alt="图片文件">
+                    {% else %}
+                    <img src="{% static 'images/file-icon.svg' %}" alt="一般文件">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="material-content">
+                <h3 class="material-title">{{ material.title }}</h3>
+                <p class="material-text">{{ material.description|truncatechars:100 }}</p>
+                <div class="material-footer">
+                    <div class="uploader-info">
+                        {% if material.uploaded_by.avatar %}
+                        <img class="uploader-avatar" src="{{ material.uploaded_by.avatar.url }}" alt="用户头像">
+                        {% elif material.uploaded_by.default_avatar %}
+                        <img class="uploader-avatar" src="/media/{{ material.uploaded_by.default_avatar }}" alt="用户头像">
+                        {% else %}
+                        <img class="uploader-avatar" src="/media/default_avatars/1.jpg" alt="用户头像">
+                        {% endif %}
+                        <span>{{ material.uploaded_by.username }}</span>
+                    </div>
+                    <div class="material-meta">
+                        <span class="material-date">{{ material.upload_time|date:"Y-m-d H:i" }}</span>
+                        <span class="download-count">📥 {{ material.download_count }}</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    {% if material.price > 0 %}
+                    <button class="btn btn-primary hover-lift download-btn" data-id="{{ material.id }}" data-price="{{ material.price }}">
+                        下载 (¥{{ material.price }})
+                    </button>
+                    {% else %}
+                    <button class="btn btn-outline hover-lift download-btn" data-id="{{ material.id }}" data-price="0">
+                        免费下载
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <div class="no-materials">暂无课件，赶快上传第一个课件吧！</div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- 间隔区域 -->
+<div class="spacer"></div>
+
+<!-- 上传课件弹窗 -->
+<div class="overlay" id="upload-form-overlay">
+    <div class="popup" id="upload-form-popup">
+        <span class="close-btn" id="close-upload-form">&times;</span>
+        <div class="modal-content">
+            <h2 class="section-title">📚 上传课件</h2>
+            <div class="section-line"></div>
+            <form id="uploadForm" method="post" enctype="multipart/form-data" action="{% url 'materials:upload_material' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_title">课件标题</label>
+                    {{ form.title }}
+                </div>
+                <div class="form-group">
+                    <label for="id_description">课件简介（选填）</label>
+                    {{ form.description }}
+                </div>
+                <div class="form-group">
+                    <label for="id_price">收费金额（元）</label>
+                    {{ form.price }}
+                </div>
+                
+                <!-- 自定义文件上传区域 -->
+                <div class="file-upload-area">
+                    <div id="fileUploadBlock">
+                        <div class="file-upload-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 4V16M12 4L8 8M12 4L16 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M20 16V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <p class="upload-text">点击上传或拖拽文件到此处</p>
+                        <p class="upload-hint">支持 .doc、.pdf、.md、.jpg、.png 等格式</p>
+                        {{ form.file }}
+                    </div>
+                    <div class="file-preview-box" id="filePreviewBox"></div>
+                </div>
+    
+                <div class="upload-actions">
+                    <button type="submit" id="upload-button" class="btn btn-primary hover-lift">上传课件</button>
+                    <button type="button" id="cancel-upload" class="btn btn-outline hover-lift">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 支付弹窗 -->
+<div class="overlay" id="payment-overlay">
+    <div class="popup" id="payment-popup">
+        <span class="close-btn" id="close-payment">&times;</span>
+        <div class="modal-content">
+            <h2 class="section-title">📱 支付宝支付</h2>
+            <div class="section-line"></div>
+            <div class="payment-content">
+                <div class="payment-info">
+                    <p>您正在下载课件：<span id="payment-material-title"></span></p>
+                    <p class="payment-price">支付金额：<strong>¥<span id="payment-amount">0.00</span></strong></p>
+                </div>
+                <div class="payment-qrcode">
+                    <div id="qrcode-container"></div>
+                    <p class="qrcode-hint">请使用支付宝扫码支付</p>
+                </div>
+                <div id="payment-actions" class="payment-actions">
+                    <button id="confirm-payment" class="btn btn-primary hover-lift">我已支付</button>
+                    <button id="cancel-payment" class="btn btn-outline hover-lift">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 回到顶部按钮 -->
+<button class="scroll-to-top hover-scale">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 19V5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5 12L12 5L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</button>
+
+<script src="{% static 'js/jquery-3.7.1.js' %}"></script>
+<script src="{% static 'js/scroll-animations.js' %}"></script>
+<script src="{% static 'js/avatar-handler.js' %}"></script>
+<script src="{% static 'js/materials-js.js' %}"></script>
+<script>
+  // 退出登录确认
+  document.querySelector('.logout').addEventListener('click', function(e) {
+    e.preventDefault();
+    const confirmed = confirm("确定退出登录吗？");
+    if (confirmed) {
+      window.location.href = this.href;
+    }
+  });
+</script>
+
+</body>
+</html>

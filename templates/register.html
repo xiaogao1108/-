@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - 校园综合服务平台</title>
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <style>
+        /* 基础样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+            overflow-x: hidden;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #4b6cb7, #6a3093, #7b4397);
+            position: relative;
+        }
+
+        /* 表单容器 */
+        .register-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+            position: relative;
+            z-index: 100;
+        }
+
+        .register-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            z-index: 100;
+            animation: fadeIn 0.8s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .register-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0)
+            );
+            transform: rotate(30deg);
+            animation: shimmer 10s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes shimmer {
+            from { transform: rotate(30deg) translate(-100%, -100%); }
+            to { transform: rotate(30deg) translate(100%, 100%); }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .logo h1 {
+            color: #4b6cb7;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .logo h1::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, #4b6cb7, #7b4397);
+            border-radius: 10px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-sizing: border-box;
+        }
+
+        .form-hint {
+            display: block;
+            margin-top: 2px;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .form-group input:focus {
+            border-color: #6a3093;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(106, 48, 147, 0.1);
+            background-color: white;
+        }
+
+        .code-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .code-input-group input {
+            flex: 1;
+        }
+
+        .code-button {
+            padding: 0 15px;
+            background: linear-gradient(135deg, #6a3093, #4b6cb7);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-weight: 500;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 8px rgba(106, 48, 147, 0.2);
+        }
+
+        .code-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(106, 48, 147, 0.3);
+            background: linear-gradient(135deg, #7b4397, #5d7ec9);
+        }
+
+        .code-button:active {
+            transform: translateY(0);
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4b6cb7, #6a3093);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(106, 48, 147, 0.3);
+            margin-top: 5px;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(106, 48, 147, 0.4);
+            background: linear-gradient(135deg, #5d7ec9, #7b4397);
+        }
+
+        .register-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .register-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .register-btn:hover::before {
+            left: 100%;
+        }
+
+        .form-footer {
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        .form-footer a {
+            color: #4b6cb7;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .form-footer a:hover {
+            color: #7b4397;
+            text-decoration: underline;
+        }
+
+        .messages {
+            margin-bottom: 15px;
+        }
+
+        .messages .error {
+            background-color: rgba(230, 57, 70, 0.1);
+            border-left: 3px solid #e5383b;
+            color: #e5383b;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        /* 密码强度指示器 */
+        .password-strength {
+            height: 3px;
+            margin-top: 5px;
+            border-radius: 2px;
+            width: 100%;
+            background-color: #f1f1f1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .strength-weak { width: 33%; background-color: #ff4d4f; }
+        .strength-medium { width: 66%; background-color: #faad14; }
+        .strength-strong { width: 100%; background-color: #52c41a; }
+
+        /* 密码强度文本 */
+        .strength-text {
+            font-size: 0.7rem;
+            margin-top: 2px;
+            text-align: right;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .strength-text.visible {
+            opacity: 1;
+        }
+        
+        /* 背景元素样式 - 减少数量和大小 */
+        .background-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        /* 保留部分背景元素，移除或缩小部分元素 */
+        .zigzag-line1, .zigzag-line3, 
+        .corner-line2, .corner-line4,
+        .bubble2 {
+            display: none;
+        }
+        
+        .bubble1, .bubble3 {
+            opacity: 0.4;
+        }
+
+        /* 不规则流动线条 - 中部 */
+        .zigzag-line {
+            position: absolute;
+            z-index: 0;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .zigzag-line1 {
+            top: 30%;
+            left: -5%;
+            width: 110%;
+            height: 100px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' d='M0,50 L100,20 L200,80 L300,10 L400,90 L500,30 L600,70 L700,20 L800,60 L900,10 L1000,50 L1100,80 L1200,20'/%3E%3C/svg%3E") repeat-x;
+            background-size: 1200px 100px;
+            animation: zigzag1 30s linear infinite;
+        }
+
+        .zigzag-line2 {
+            top: 50%;
+            right: -5%;
+            width: 110%;
+            height: 80px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' d='M0,80 L150,30 L300,70 L450,20 L600,60 L750,10 L900,50 L1050,20 L1200,70'/%3E%3C/svg%3E") repeat-x;
+            background-size: 1200px 80px;
+            animation: zigzag2 25s linear infinite;
+        }
+
+        .zigzag-line3 {
+            bottom: 25%;
+            left: -10%;
+            width: 120%;
+            height: 120px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' d='M0,60 L120,20 L240,80 L360,40 L480,100 L600,20 L720,70 L840,30 L960,90 L1080,10 L1200,60'/%3E%3C/svg%3E") repeat-x;
+            background-size: 1200px 120px;
+            animation: zigzag3 35s linear infinite;
+        }
+
+        @keyframes zigzag1 {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-1200px); }
+        }
+
+        @keyframes zigzag2 {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(1200px); }
+        }
+
+        @keyframes zigzag3 {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-1200px); }
+        }
+
+        /* 不规则拐角线条 - 角落装饰 */
+        .corner-line {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+
+        .corner-line1 {
+            top: 15%;
+            left: 10%;
+            width: 150px;
+            height: 150px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.8)' stroke-width='2' d='M0,50 L50,50 L50,0 M0,100 L100,100 L100,0 M0,150 L150,150 L150,0'/%3E%3C/svg%3E") no-repeat;
+            animation: rotate1 30s linear infinite;
+        }
+
+        .corner-line2 {
+            top: 25%;
+            right: 10%;
+            width: 120px;
+            height: 120px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.8)' stroke-width='2' d='M0,0 L120,0 L120,40 M0,40 L80,40 L80,80 M0,80 L40,80 L40,120'/%3E%3C/svg%3E") no-repeat;
+            animation: rotate2 25s linear infinite;
+        }
+
+        .corner-line3 {
+            bottom: 15%;
+            left: 15%;
+            width: 100px;
+            height: 100px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.8)' stroke-width='2' d='M0,0 L50,0 L50,50 L100,50 M0,50 L30,50 L30,100 M70,0 L70,30 L100,30'/%3E%3C/svg%3E") no-repeat;
+            animation: rotate3 20s linear infinite;
+        }
+
+        .corner-line4 {
+            bottom: 20%;
+            right: 10%;
+            width: 140px;
+            height: 140px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 140'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.8)' stroke-width='2' d='M0,140 L0,70 L70,70 L70,0 M0,100 L40,100 L40,40 L100,40 L100,0'/%3E%3C/svg%3E") no-repeat;
+            animation: rotate4 35s linear infinite;
+        }
+
+        @keyframes rotate1 {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes rotate2 {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+
+        @keyframes rotate3 {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes rotate4 {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(-180deg) scale(0.9); }
+            100% { transform: rotate(-360deg) scale(1); }
+        }
+        
+        /* 气泡元素 */
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+            transition: transform 0.3s ease;
+        }
+
+        .bubble1 {
+            width: 250px;
+            height: 250px;
+            top: 20%;
+            left: 20%;
+            animation: float1 20s ease-in-out infinite;
+        }
+
+        .bubble2 {
+            width: 350px;
+            height: 350px;
+            top: 60%;
+            right: 10%;
+            animation: float2 25s ease-in-out infinite;
+        }
+
+        .bubble3 {
+            width: 200px;
+            height: 200px;
+            bottom: 20%;
+            left: 30%;
+            animation: float3 15s ease-in-out infinite;
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(50px, -30px); }
+        }
+
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-40px, 40px); }
+        }
+
+        @keyframes float3 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 30px); }
+        }
+
+        /* 额外添加的紧凑样式 */
+        .compact-form .verify-code input {
+            max-width: 70%;
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景元素 -->
+    <div class="background-elements">
+        <!-- 不规则折线 -->
+        <div class="zigzag-line zigzag-line1"></div>
+        <div class="zigzag-line zigzag-line2"></div>
+        <div class="zigzag-line zigzag-line3"></div>
+        
+        <!-- 不规则拐角线条 -->
+        <div class="corner-line corner-line1"></div>
+        <div class="corner-line corner-line2"></div>
+        <div class="corner-line corner-line3"></div>
+        <div class="corner-line corner-line4"></div>
+        
+        <!-- 气泡装饰 -->
+        <div class="bubble bubble1"></div>
+        <div class="bubble bubble2"></div>
+        <div class="bubble bubble3"></div>
+    </div>
+    
+    <!-- 注册表单容器 -->
+    <div class="register-container">
+        <div class="register-card">
+            <div class="logo">
+                <h1>校园综合服务平台</h1>
+                <p>创建您的账户</p>
+            </div>
+            
+            <form method="post" action="{% url 'users:register' %}" class="compact-form">
+                {% csrf_token %}
+                
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="error">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" placeholder="请输入用户名" required>
+                    <small class="form-hint">用户名必须为6-12个数字或字母</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">邮箱</label>
+                    <div class="code-input-group">
+                        <input type="email" id="email" name="email" placeholder="请输入邮箱" required>
+                        <button type="button" id="send-code-btn" class="code-button">获取验证码</button>
+                    </div>
+                </div>
+                
+                <div class="form-group verify-code">
+                    <label for="email_code">验证码</label>
+                    <input type="text" id="email_code" name="email_code" placeholder="请输入邮箱验证码" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" placeholder="请输入密码" required>
+                    <small class="form-hint">密码必须为6-12个数字或字母</small>
+                    <div class="password-strength">
+                        <div class="strength-bar"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm_password">确认密码</label>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="请再次输入密码" required>
+                </div>
+                
+                <button type="submit" class="register-btn">注册</button>
+                
+                <div class="form-footer">
+                    <p>已有账号？<a href="{% url 'users:login' %}">立即登录</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // 高级鼠标移动效果
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            // 创建鼠标位置变量，值从-1到1
+            const normalizedX = (mouseX - 0.5) * 2;
+            const normalizedY = (mouseY - 0.5) * 2;
+            
+            // 为不规则折线应用移动效果
+            document.querySelectorAll('.zigzag-line').forEach((line, index) => {
+                const distance = index + 1;
+                const rotateAmount = 2 * (index + 1);
+                line.style.transform = `translateY(${normalizedY * 10 * distance}px) rotate(${normalizedX * rotateAmount}deg)`;
+            });
+            
+            // 为不规则拐角线条应用效果
+            document.querySelectorAll('.corner-line').forEach((line, index) => {
+                const distance = index + 1;
+                const scaleAmount = 0.05 * (index + 1);
+                line.style.transform = `translate(${normalizedX * 15 * distance}px, ${normalizedY * 15 * distance}px) scale(${1 + Math.abs(normalizedX * normalizedY) * scaleAmount})`;
+            });
+            
+            // 气泡跟随鼠标移动，形成有机的动态效果
+            document.querySelectorAll('.bubble').forEach((bubble, index) => {
+                const distance = index + 1;
+                const offsetX = normalizedX * 40 * distance;
+                const offsetY = normalizedY * 40 * distance;
+                const rotation = (normalizedX * normalizedY) * 10;
+                const scale = 1 + Math.abs(normalizedX * normalizedY) * 0.1;
+                
+                bubble.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotation}deg) scale(${scale})`;
+            });
+            
+            // 注册卡片微妙浮动效果
+            const registerCard = document.querySelector('.register-card');
+            if (registerCard) {
+                registerCard.style.transform = `translate(${normalizedX * 5}px, ${normalizedY * 5}px)`;
+            }
+        });
+        
+        // 密码强度检测
+        const passwordInput = document.getElementById('password');
+        const strengthBar = document.querySelector('.strength-bar');
+        const strengthText = document.querySelector('.strength-text');
+        const strengthValue = document.getElementById('strength-value');
+        
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            const strength = checkPasswordStrength(password);
+            
+            strengthText.classList.add('visible');
+            
+            if (strength === 0) {
+                strengthBar.className = 'strength-bar';
+                strengthValue.textContent = '';
+                strengthText.classList.remove('visible');
+            } else if (strength === 1) {
+                strengthBar.className = 'strength-bar strength-weak';
+                strengthValue.textContent = '弱';
+                strengthValue.style.color = '#ff4d4f';
+            } else if (strength === 2) {
+                strengthBar.className = 'strength-bar strength-medium';
+                strengthValue.textContent = '中';
+                strengthValue.style.color = '#faad14';
+            } else {
+                strengthBar.className = 'strength-bar strength-strong';
+                strengthValue.textContent = '强';
+                strengthValue.style.color = '#52c41a';
+            }
+        });
+        
+        function checkPasswordStrength(password) {
+            if (!password) return 0;
+            
+            let score = 0;
+            
+            // 长度检查
+            if (password.length >= 8) score++;
+            
+            // 检查是否包含数字和字母
+            if (/[0-9]/.test(password) && /[a-zA-Z]/.test(password)) score++;
+            
+            // 检查是否包含特殊字符
+            if (/[^a-zA-Z0-9]/.test(password)) score++;
+            
+            return score;
+        }
+        
+        // 确认密码匹配检查
+        const confirmPasswordInput = document.getElementById('confirm_password');
+        
+        confirmPasswordInput.addEventListener('input', function() {
+            if (this.value && this.value !== passwordInput.value) {
+                this.setCustomValidity('两次输入的密码不匹配');
+                this.style.borderColor = '#e5383b';
+            } else {
+                this.setCustomValidity('');
+                this.style.borderColor = this.value ? '#6a3093' : '#ddd';
+            }
+        });
+        
+        // 发送验证码逻辑
+        document.getElementById('send-code-btn').addEventListener('click', function() {
+            const email = document.getElementById('email').value.trim();
+            if (!email) {
+                alert('请输入邮箱地址');
+                return;
+            }
+            
+            const btn = this;
+            btn.disabled = true;
+            btn.textContent = '发送中...';
+            
+            fetch('{% url "users:send_email_code" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ email: email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let countdown = 60;
+                    const timer = setInterval(() => {
+                        if (countdown > 0) {
+                            btn.textContent = `${countdown}秒后重试`;
+                            countdown--;
+                        } else {
+                            clearInterval(timer);
+                            btn.textContent = '获取验证码';
+                            btn.disabled = false;
+                        }
+                    }, 1000);
+                } else {
+                    alert(data.message || '发送验证码失败，请重试');
+                    btn.textContent = '获取验证码';
+                    btn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('发送验证码失败，请重试');
+                btn.textContent = '获取验证码';
+                btn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>

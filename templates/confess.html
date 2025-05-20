@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>表白墙 - 校园综合服务平台</title>
+  <link rel="stylesheet" href="{% static 'css/common.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/animations.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/confess-css.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/decorations.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="confess">
+
+<!-- 页面加载动画 -->
+<div class="page-loader">
+  <div class="loader-content">
+    <div class="loader"></div>
+    <p class="fade-in">加载中，请稍候...</p>
+  </div>
+</div>
+
+<!-- 滚动进度条 -->
+<div class="scroll-progress"></div>
+
+<!-- 装饰背景 -->
+<div class="flowing-background">
+  <div class="decorative-line"></div>
+  <div class="decorative-line"></div>
+  <div class="decorative-line"></div>
+  <div class="decorative-line"></div>
+  <div class="decorative-shape"></div>
+  <div class="decorative-shape"></div>
+  <div class="decorative-shape"></div>
+  <img src="{% static 'images/book-logo.svg' %}" class="mini-logo" alt="装饰">
+  <img src="{% static 'images/chat-logo.svg' %}" class="mini-logo" alt="装饰">
+  <img src="{% static 'images/heart-logo.svg' %}" class="mini-logo" alt="装饰">
+  <!-- 添加20个装饰点 -->
+  {% for i in "12345678901234567890" %}
+  <div class="decorative-dot"></div>
+  {% endfor %}
+  <div class="wave"></div>
+  <div class="wave"></div>
+</div>
+
+<!-- 新增流动效果元素 -->
+<div class="particle-system">
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+</div>
+
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+
+<div class="ripple-ring"></div>
+<div class="ripple-ring"></div>
+<div class="ripple-ring"></div>
+<div class="ripple-ring"></div>
+
+<!-- 顶部导航栏 -->
+<header>
+  <div class="navbar">
+    <div class="nav-links">
+      <ul>
+        <li><a href="{% url 'homepage:homepage' %}">首页</a></li>
+        <li><a href="{% url 'activities:activities' %}">社团活动</a></li>
+        <li><a href="{% url 'materials:materials'%}">课件共享</a></li>
+        <li><a href="{% url 'forum:forum' %}">论坛</a></li>
+        <li><a href="{% url 'confess:confess' %}" class="active">表白墙</a></li>
+        <li><a href="{% url 'lostfound:lost_found_page' %}">失物招领</a></li>
+        <!-- 二手市场功能暂时隐藏 -->
+        <li><a href="{% url 'news:news' %}">校园火榜</a></li>
+      </ul>
+    </div>
+    <div class="user-area">
+      <a href="{% url 'users:logout' %}" class="logout">退出登录</a>
+      <!-- 当前头像 -->
+      {% if user.avatar %}
+      <img id="current-avatar" src="{{ user.avatar.url }}" class="avatar-circle hover-scale" alt="头像" onerror="this.src='/media/default_avatars/1.jpg'">
+      {% elif user.default_avatar %}
+      <img id="current-avatar" src="/media/{{ user.default_avatar }}" class="avatar-circle hover-scale" alt="默认头像" onerror="this.src='/media/default_avatars/1.jpg'">
+      {% else %}
+      <img id="current-avatar" src="/media/default_avatars/1.jpg" class="avatar-circle hover-scale" alt="默认头像">
+      {% endif %}
+
+      <!-- 头像选择弹窗 -->
+      <div id="avatar-selector" class="avatar-selector hidden">
+        <h3 class="avatar-selector-title">选择头像</h3>
+        <div class="avatar-grid">
+          <!-- 默认头像列表 -->
+          {% for i in avatar_range %}
+          <img src="/media/default_avatars/{{ i }}.jpg" class="avatar-option hover-scale" data-path="default_avatars/{{ i }}.jpg">
+          {% endfor %}
+        </div>
+        <!-- 自定义头像上传 -->
+        <form method="post" enctype="multipart/form-data" action="{% url 'homepage:upload_avatar' %}">
+          {% csrf_token %}
+          <label class="custom-upload hover-lift">
+            <i class="fas fa-upload"></i> 上传自定义头像
+            <input type="file" name="avatar" accept="image/*">
+          </label>
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="main-container">
+  <!-- 英雄区域 -->
+  <section class="hero gradient-animation">
+    <div class="hero-content">
+      <h1 class="fade-in-down">❤️ 表白墙</h1>
+      <p class="typing-text fade-in-up delay-300" data-speed="80" data-delay="500">在这里大声的说出你心爱的对象吧!</p>
+      <div class="hero-cta fade-in delay-600">
+        <a href="#" id="show-confess-form" class="btn btn-primary hover-lift">发布表白</a>
+      </div>
+    </div>
+    <div class="hero-shapes">
+      <div class="hero-shape shape1 float"></div>
+      <div class="hero-shape shape2 float-strong delay-200"></div>
+      <div class="hero-shape shape3 float delay-400"></div>
+    </div>
+    <!-- 漂浮的爱心装饰 -->
+    <div class="floating-hearts">
+      <div class="heart heart1"></div>
+      <div class="heart heart2"></div>
+      <div class="heart heart3"></div>
+      <div class="heart heart4"></div>
+      <div class="heart heart5"></div>
+    </div>
+  </section>
+
+  <!-- 表白列表区域 -->
+  <section class="confess-posts reveal reveal-up delay-200">
+    <div class="confess-header">
+      <div class="header-left">
+        <h2 class="section-title">表白列表</h2>
+        <div class="section-line"></div>
+      </div>
+    </div>
+
+    <!-- 背景装饰 -->
+    <div class="confess-background">
+      <div class="bg-line line1"></div>
+      <div class="bg-line line2"></div>
+      <div class="bg-line line3"></div>
+      <div class="bg-line line4"></div>
+      <div class="bg-heart heart1"></div>
+      <div class="bg-heart heart2"></div>
+      <div class="bg-heart heart3"></div>
+      <!-- 添加流动的爱心 -->
+      <div class="floating-bg-heart"></div>
+      <div class="floating-bg-heart"></div>
+      <div class="floating-bg-heart"></div>
+      <div class="floating-bg-heart"></div>
+      <div class="floating-bg-heart"></div>
+      <div class="floating-bg-heart"></div>
+      <!-- 添加装饰性星星 -->
+      <div class="bg-star"></div>
+      <div class="bg-star"></div>
+      <div class="bg-star"></div>
+      <!-- 添加装饰性圆点 -->
+      <div class="bg-dot"></div>
+      <div class="bg-dot"></div>
+      <div class="bg-dot"></div>
+      <div class="bg-dot"></div>
+    </div>
+
+    <!-- 搜索框移动到这里 -->
+    <div class="confess-search-container">
+      <form method="get" action="{% url 'confess:search_confessions' %}" class="confess-search">
+        <input type="text" name="q" placeholder="搜索表白..." value="{{ query }}">
+        <button type="submit" class="btn btn-secondary hover-lift">搜索</button>
+      </form>
+    </div>
+
+    <div class="confess-grid">
+      {% for confession in confessions %}
+      <article class="confess-card reveal reveal-left chain-item hover-lift">
+        <div class="confess-content">
+          <div class="confess-header-card">
+            <div class="confess-avatar">
+              {% if confession.is_anonymous %}
+                <div class="anonymous-avatar">匿</div>
+              {% elif confession.author.avatar %}
+                <img src="{{ confession.author.avatar.url }}" alt="头像">
+              {% elif confession.author.default_avatar %}
+                <img src="/media/{{ confession.author.default_avatar }}" alt="头像">
+              {% else %}
+                <img src="/media/default_avatars/1.jpg" alt="头像">
+              {% endif %}
+            </div>
+            <h3 class="confess-title">
+              {% if confession.is_anonymous %}
+                匿名
+              {% else %}
+                {{ confession.display_author }}
+              {% endif %}
+               <span class="confess-arrow">➤</span> {{ confession.to_whom }}
+            </h3>
+          </div>
+          <p class="confess-text">{{ confession.content }}</p>
+          <div class="confess-footer">
+            <div class="confess-meta">
+              <span class="confess-date">{{ confession.created_at|date:"Y-m-d H:i" }}</span>
+            </div>
+            <div class="confess-actions">
+              <a href="{% url 'confess:vote_confession' confession.id 'like' %}" class="btn-vote like-btn {% if user in confession.liked_users %}active{% endif %}">
+                <span class="vote-icon">❤️</span>
+                <span class="vote-count">{{ confession.likes }}</span>
+              </a>
+              <a href="{% url 'confess:vote_confession' confession.id 'dislike' %}" class="btn-vote dislike-btn {% if user in confession.disliked_users %}active{% endif %}">
+                <span class="vote-icon">💔</span>
+                <span class="vote-count">{{ confession.dislikes }}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </article>
+      {% empty %}
+      <div class="no-confessions">暂无表白，赶快发布第一条吧！</div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+<!-- 间隔区域 -->
+<div class="spacer"></div>
+
+<!-- 发表白弹窗 -->
+<div class="overlay" id="confess-form-overlay">
+  <div class="popup" id="confess-form-popup">
+    <span class="close-btn" id="close-confess-form">&times;</span>
+    <div class="modal-content">
+      <h2 class="section-title">❤️ 发布表白</h2>
+      <div class="section-line"></div>
+      <form id="confessForm" method="POST" action="{% url 'confess:create_confession' %}">
+        {% csrf_token %}
+        <div class="form-group author-name-group">
+          <input type="text" name="author_name" id="author_name" placeholder="你的昵称" required />
+        </div>
+        <div class="form-group">
+          <input type="text" name="target" placeholder="想表白的人" required />
+        </div>
+        <div class="form-group">
+          <textarea name="content" placeholder="请输入你的表白内容..." rows="5" required></textarea>
+        </div>
+        <div class="form-group checkbox-group">
+          <label>
+            <input type="checkbox" name="is_anonymous" id="is_anonymous">
+            <span>匿名表白</span>
+          </label>
+        </div>
+        <div class="confess-actions">
+          <button type="submit" class="btn btn-primary hover-lift">发布表白</button>
+          <button type="button" id="cancel-confess" class="btn btn-outline hover-lift">取消</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 回到顶部按钮 -->
+<button class="scroll-to-top hover-scale">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 19V5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M5 12L12 5L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>
+
+<script src="{% static 'js/jquery-3.7.1.js' %}"></script>
+<script src="{% static 'js/scroll-animations.js' %}"></script>
+<script src="{% static 'js/avatar-handler.js' %}"></script>
+<script src="{% static 'js/confess-js.js' %}"></script>
+
+</body>
+</html>

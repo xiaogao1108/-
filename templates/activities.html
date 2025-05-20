@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>社团活动 - 校园综合服务平台</title>
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}">
+    <link rel="stylesheet" href="{% static 'css/activities-css.css' %}">
+    <link rel="stylesheet" href="{% static 'css/homepage-css.css' %}">
+    <link rel="stylesheet" href="{% static 'css/decorations.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="{% static 'js/jquery-3.7.1.js' %}"></script>
+</head>
+<body class="activities">
+<!-- 页面加载动画 -->
+<div class="page-loader">
+    <div class="loader-content">
+        <div class="loader"></div>
+        <p class="fade-in">加载中，请稍候...</p>
+    </div>
+</div>
+
+<!-- 滚动进度条 -->
+<div class="scroll-progress"></div>
+
+<!-- 装饰背景 -->
+<div class="flowing-background">
+    <div class="decorative-line"></div>
+    <div class="decorative-line"></div>
+    <div class="decorative-line"></div>
+    <div class="decorative-line"></div>
+    <div class="decorative-shape"></div>
+    <div class="decorative-shape"></div>
+    <div class="decorative-shape"></div>
+    <img src="{% static 'images/book-logo.svg' %}" class="mini-logo" alt="装饰">
+    <img src="{% static 'images/chat-logo.svg' %}" class="mini-logo" alt="装饰">
+    <img src="{% static 'images/heart-logo.svg' %}" class="mini-logo" alt="装饰">
+    <!-- 添加20个装饰点 -->
+    {% for i in "12345678901234567890" %}
+    <div class="decorative-dot"></div>
+    {% endfor %}
+    <div class="wave"></div>
+    <div class="wave"></div>
+</div>
+
+<!-- 新增流动效果元素 -->
+<div class="particle-system">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+</div>
+
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+<div class="flow-line"></div>
+
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+<div class="glow-spot"></div>
+
+<div class="ripple-ring"></div>
+<div class="ripple-ring"></div>
+<div class="ripple-ring"></div>
+<div class="ripple-ring"></div>
+
+<!-- 顶部导航栏 -->
+<header>
+    <div class="navbar">
+        <div class="nav-links">
+            <ul>
+                <li><a href="{% url 'homepage:homepage' %}">首页</a></li>
+                <li><a href="{% url 'activities:activities' %}" class="active">社团活动</a></li>
+                <li><a href="{% url 'materials:materials'%}">课件共享</a></li>
+                <li><a href="{% url 'forum:forum' %}">论坛</a></li>
+                <li><a href="{% url 'confess:confess' %}">表白墙</a></li>
+                <li><a href="{% url 'lostfound:lost_found_page' %}">失物招领</a></li>
+                <!-- 二手市场功能暂时隐藏 -->
+                <li><a href="{% url 'news:news' %}">校园火榜</a></li>
+            </ul>
+        </div>
+        <div class="user-area">
+            <a href="{% url 'users:logout' %}" class="logout">退出登录</a>
+            <!-- 当前头像 -->
+            {% if user.avatar %}
+            <img id="current-avatar" src="{{ user.avatar.url }}" class="avatar-circle hover-scale" alt="头像" onerror="this.src='/media/default_avatars/1.jpg'">
+            {% elif user.default_avatar %}
+            <img id="current-avatar" src="/media/{{ user.default_avatar }}" class="avatar-circle hover-scale" alt="默认头像" onerror="this.src='/media/default_avatars/1.jpg'">
+            {% else %}
+            <img id="current-avatar" src="/media/default_avatars/1.jpg" class="avatar-circle hover-scale" alt="默认头像">
+            {% endif %}
+            
+            <!-- 头像选择弹窗 -->
+            <div id="avatar-selector" class="avatar-selector hidden">
+                <h3 class="avatar-selector-title">选择头像</h3>
+                <div class="avatar-grid">
+                    <!-- 默认头像列表 -->
+                    {% for i in avatar_range %}
+                    <img src="/media/default_avatars/{{ i }}.jpg" class="avatar-option hover-scale" data-path="default_avatars/{{ i }}.jpg">
+                    {% endfor %}
+                </div>
+                <!-- 自定义头像上传 -->
+                <form method="post" enctype="multipart/form-data" action="{% url 'homepage:upload_avatar' %}">
+                    {% csrf_token %}
+                    <label class="custom-upload hover-lift">
+                        <i class="fas fa-upload"></i> 上传自定义头像
+                        <input type="file" name="avatar" accept="image/*">
+                    </label>
+                </form>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- 英雄区域 -->
+<section class="hero reduced-height">
+    <div class="hero-content">
+        <h1 class="fade-in-down">📣 社团活动</h1>
+        <p class="typing-text fade-in-up delay-300" data-speed="80" data-delay="500">上传你们社团的活动信息，让更多人参与吧！</p>
+        <div class="hero-cta fade-in delay-600">
+            <button id="create-activity-btn" class="btn-create-activity">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5V19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M5 12H19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                发布新活动
+            </button>
+        </div>
+    </div>
+    <div class="hero-shapes">
+        <div class="hero-shape shape1"></div>
+        <div class="hero-shape shape2"></div>
+        <div class="hero-shape shape3"></div>
+    </div>
+</section>
+
+<!-- 活动展示区域 -->
+<section class="activities-display">
+    <!-- 装饰性角落 -->
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+    
+    <h2>近期活动</h2>
+    
+    <!-- 搜索框 -->
+    <div class="activity-search">
+        <div class="search-container">
+            <input type="text" id="activity-search-input" placeholder="搜索活动标题、时间或地点...">
+            <button id="activity-search-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+        <!-- 隐藏过滤器但保持功能 -->
+        <div class="search-filters hidden">
+            <input type="checkbox" class="search-filter" value="title" checked>
+            <input type="checkbox" class="search-filter" value="time" checked>
+            <input type="checkbox" class="search-filter" value="location" checked>
+        </div>
+    </div>
+    
+    {% for activity in activities %}
+    <div class="activity-card" data-id="{{ activity.id }}" data-title="{{ activity.title }}" data-time="{{ activity.datetime|date:'Y-m-d H:i' }}" data-location="{{ activity.location }}">
+        <img src="{% if activity.image %}{{ activity.image.url }}{% else %}/static/images/default.jpg{% endif %}" alt="活动封面" />
+        <div class="activity-info">
+            <h3 class="activity-title">{{ activity.title }}</h3>
+            <p>📅 {{ activity.datetime|date:"Y-m-d H:i" }}<br />📍 {{ activity.location }}</p>
+            <p class="activity-description">{{ activity.description }}</p>
+            <div class="activity-footer">
+                <p class="join-count">已报名：{{ activity.participant_count }} 人</p>
+            <button class="join-btn" {% if activity.has_joined %} disabled {% endif %}>
+                {% if activity.has_joined %}已选{% else %}我想参加{% endif %}
+            </button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</section>
+    
+<!-- 间隔区域 -->
+<div class="spacer"></div>
+
+<!-- 活动上传模态框 -->
+<div class="modal" id="activity-upload-modal">
+    <div class="modal-content">
+        <button class="close-modal">&times;</button>
+        <h2>上传新活动</h2>
+        <form method="post" enctype="multipart/form-data" action="{% url 'activities:create_activity' %}" class="upload-form">
+            {% csrf_token %}
+            {% if form.errors %}
+            <div class="form-errors">
+                请修正以下错误：
+                <ul>
+                    {% for field in form %}
+                    {% for error in field.errors %}
+                    <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                    {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            {{ form.as_p }}
+
+            <div class="center-btn">
+                <button type="submit" class="upload-btn">上传活动</button>
+            </div>
+        </form>
+        
+        <div class="auth-note" style="margin-top: 20px; font-size: 13px; color: #666; border-top: 1px solid #eee; padding-top: 15px;">
+        </div>
+    </div>
+</div>
+
+<!-- 错误弹窗 -->
+<div id="error-popup">
+    <div class="popup-content">
+        <p id="error-message"></p>
+        <button id="close-error-btn">关闭</button>
+    </div>
+</div>
+
+<!-- 回到顶部按钮 -->
+<button class="scroll-to-top hover-scale">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 19V5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5 12L12 5L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</button>
+
+<!-- 添加活动详情弹窗 -->
+<div class="activity-modal">
+    <div class="activity-modal-content">
+        <span class="close-activity-modal">&times;</span>
+        <div class="activity-modal-header">
+            <h2 id="modal-activity-title"></h2>
+            <div class="activity-meta">
+                <p id="modal-activity-time"></p>
+                <p id="modal-activity-location"></p>
+            </div>
+        </div>
+        <div class="activity-modal-body">
+            <div class="activity-modal-image">
+                <img id="modal-activity-image" src="" alt="活动图片">
+            </div>
+            <div class="activity-modal-description">
+                <h3>活动详情</h3>
+                <p id="modal-activity-description"></p>
+            </div>
+        </div>
+        <div class="activity-modal-footer">
+            <p class="join-count" id="modal-join-count"></p>
+            <button class="join-btn" id="modal-join-btn"></button>
+        </div>
+    </div>
+</div>
+
+<!-- 图片放大查看弹窗 -->
+<div class="image-zoom-overlay">
+    <span class="close-zoom">&times;</span>
+    <img class="zoomed-image" src="" alt="放大的图片">
+</div>
+
+<script src="{% static 'js/jquery-3.7.1.js' %}"></script>
+<script src="{% static 'js/scroll-animations.js' %}"></script>
+<script src="{% static 'js/avatar-handler.js' %}"></script>
+<script>
+$(function() {
+    // 判断用户是否为社团账户
+    var isClubMember = "{{ request.user.is_club_account|yesno:'true,false' }}";
+    if (isClubMember === "true") {
+        isClubMember = true;
+    } else {
+        isClubMember = false;
+    }
+    
+    // 页面加载完成后隐藏加载动画
+    $('.page-loader').addClass('loaded');
+    setTimeout(function() {
+        $('.page-loader').hide();
+    }, 500);
+
+    // 退出登录确认
+    $('.logout').click(function(e) {
+        e.preventDefault();
+        const confirmed = confirm("确定退出登录吗？");
+        if (confirmed) {
+            window.location.href = this.href;
+        }
+    });
+
+    // 显示/隐藏上传模态框
+    $('#create-activity-btn').click(function() {
+        if (isClubMember) {
+            // 社团账户可以发布活动
+            $('#activity-upload-modal').css('display', 'flex');
+        } else {
+            // 普通用户显示错误提示
+            $('#error-message').text('只有社团账号才能发布活动');
+            $('#error-popup').css('display', 'flex');
+        }
+    });
+
+    // 关闭模态框
+    $('.close-modal').click(function() {
+        $('#activity-upload-modal').css('display', 'none');
+    });
+
+    // 搜索活动功能
+    $('#activity-search-btn').click(function() {
+        searchActivities();
+    });
+
+    $('#activity-search-input').keypress(function(e) {
+        if (e.which === 13) {
+            searchActivities();
+        }
+    });
+
+    function searchActivities() {
+        var searchText = $('#activity-search-input').val().toLowerCase();
+        
+        // 获取选中的过滤选项
+        var filters = [];
+        $('.search-filter:checked').each(function() {
+            filters.push($(this).val());
+        });
+        
+        // 如果没有选中任何过滤选项，则默认搜索所有字段
+        if (filters.length === 0) {
+            filters = ['title', 'time', 'location'];
+        }
+        
+        $('.activity-card').each(function() {
+            var matchFound = false;
+            
+            // 根据过滤器搜索相应字段
+            if (filters.includes('title') && $(this).data('title').toLowerCase().includes(searchText)) {
+                matchFound = true;
+            }
+            if (filters.includes('time') && $(this).data('time').toLowerCase().includes(searchText)) {
+                matchFound = true;
+            }
+            if (filters.includes('location') && $(this).data('location').toLowerCase().includes(searchText)) {
+                matchFound = true;
+            }
+            
+            // 显示或隐藏活动卡片
+            if (matchFound || searchText === '') {
+                $(this).removeClass('hidden');
+            } else {
+                $(this).addClass('hidden');
+            }
+        });
+    }
+    
+    // 关闭错误提示
+    $('#close-error-btn').click(function() {
+        $('#error-popup').css('display', 'none');
+    });
+
+    // 处理活动报名
+    $('.join-btn').click(function(e) {
+        e.stopPropagation(); // 阻止事件冒泡，避免触发卡片点击
+        var activityId = $(this).closest('.activity-card').data('id');
+        var button = $(this);
+        var isJoined = button.text() === '已选';
+        
+        $.ajax({
+            url: "{% url 'activities:join_activity' 0 %}".replace('0', activityId),
+            type: 'POST',
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    if (response.joined) {
+                        button.text('已选').prop('disabled', true);
+                    } else {
+                        button.text('我想参加').prop('disabled', false);
+                    }
+                    // 更新报名人数
+                    button.closest('.activity-footer').find('.join-count').text('已报名：' + response.participants_count + ' 人');
+                } else {
+                    $('#error-message').text(response.message || '操作失败，请重试');
+                    $('#error-popup').css('display', 'flex');
+                }
+            },
+            error: function() {
+                $('#error-message').text('网络错误，请重试');
+                $('#error-popup').css('display', 'flex');
+            }
+        });
+    });
+
+    // 显示弹窗中的报名按钮点击事件
+    $('#modal-join-btn').click(function() {
+        var activityId = $(this).data('activity-id');
+        var button = $(this);
+        
+        $.ajax({
+            url: "{% url 'activities:join_activity' 0 %}".replace('0', activityId),
+            type: 'POST',
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    if (response.joined) {
+                        button.text('已选').prop('disabled', true);
+                    } else {
+                        button.text('我想参加').prop('disabled', false);
+                    }
+                    
+                    // 更新弹窗中的报名人数
+                    $('#modal-join-count').text('已报名：' + response.participants_count + ' 人');
+                    
+                    // 更新卡片中的按钮和报名人数
+                    var card = $('.activity-card[data-id="' + activityId + '"]');
+                    if (response.joined) {
+                        card.find('.join-btn').text('已选').prop('disabled', true);
+                    } else {
+                        card.find('.join-btn').text('我想参加').prop('disabled', false);
+                    }
+                    card.find('.join-count').text('已报名：' + response.participants_count + ' 人');
+            } else {
+                    $('#error-message').text(response.message || '操作失败，请重试');
+                    $('#error-popup').css('display', 'flex');
+                }
+            },
+            error: function() {
+                $('#error-message').text('网络错误，请重试');
+                $('#error-popup').css('display', 'flex');
+            }
+        });
+    });
+
+    // 回到顶部按钮
+    $(window).scroll(function() {
+        if ($(this).scrollTop() > 300) {
+            $('.scroll-to-top').addClass('visible');
+        } else {
+            $('.scroll-to-top').removeClass('visible');
+        }
+        
+        // 更新滚动进度条
+        var scrollPercent = ($(window).scrollTop() / ($(document).height() - $(window).height())) * 100;
+        $('.scroll-progress').css('width', scrollPercent + '%');
+    });
+    
+    $('.scroll-to-top').click(function() {
+        $('html, body').animate({
+            scrollTop: 0
+        }, 500);
+        return false;
+    });
+
+    // 点击活动卡片打开详情弹窗
+    $('.activity-card').click(function(e) {
+        // 如果点击的是按钮，不打开弹窗
+        if ($(e.target).closest('.join-btn').length) {
+            return;
+        }
+        
+        var activityId = $(this).data('id');
+        var activityTitle = $(this).data('title');
+        var activityTime = $(this).data('time');
+        var activityLocation = $(this).data('location');
+        var activityDescription = $(this).find('.activity-description').text();
+        var activityImage = $(this).find('img').attr('src');
+        var joinCount = $(this).find('.join-count').text();
+        var joinBtnText = $(this).find('.join-btn').text();
+        var joinBtnDisabled = $(this).find('.join-btn').prop('disabled');
+        
+        // 填充弹窗内容
+        $('#modal-activity-title').text(activityTitle);
+        $('#modal-activity-time').text('📅 ' + activityTime);
+        $('#modal-activity-location').text('📍 ' + activityLocation);
+        $('#modal-activity-description').text(activityDescription);
+        $('#modal-activity-image').attr('src', activityImage);
+        $('#modal-join-count').text(joinCount);
+        $('#modal-join-btn').text(joinBtnText).prop('disabled', joinBtnDisabled).data('activity-id', activityId);
+        
+        // 显示弹窗
+        $('.activity-modal').css('display', 'flex');
+        
+        // 防止滚动穿透
+        $('body').css('overflow', 'hidden');
+    });
+    
+    // 关闭活动详情弹窗
+    $('.close-activity-modal').click(function() {
+        $('.activity-modal').css('display', 'none');
+        $('body').css('overflow', 'auto');
+    });
+    
+    // 点击弹窗外部关闭弹窗
+    $('.activity-modal').click(function(e) {
+        if ($(e.target).closest('.activity-modal-content').length === 0) {
+            $('.activity-modal').css('display', 'none');
+            $('body').css('overflow', 'auto');
+        }
+    });
+
+    // 点击弹窗中的图片放大查看
+    $(document).on('click', '.activity-modal-image', function() {
+        var imgSrc = $(this).find('img').attr('src');
+        $('.zoomed-image').attr('src', imgSrc);
+        $('.image-zoom-overlay').css('display', 'flex');
+        $('body').css('overflow', 'hidden');
+    });
+    
+    // 关闭放大图片
+    $('.close-zoom').click(function() {
+        $('.image-zoom-overlay').css('display', 'none');
+        $('body').css('overflow', 'auto');
+    });
+    
+    // 点击图片外区域关闭放大图片
+    $('.image-zoom-overlay').click(function(e) {
+        if (e.target === this) {
+            $(this).css('display', 'none');
+            $('body').css('overflow', 'auto');
+        }
+    });
+});
+</script>
+</body>
+</html>
